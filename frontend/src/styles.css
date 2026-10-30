@@ -1,5 +1,7 @@
 
-/* LOCKSY LOGIN AND REGISTRATION */
+/* =====================================
+   LOCKSY LOGIN AND REGISTRATION
+===================================== */
 
 .auth-page {
   min-height: 100vh;
@@ -217,6 +219,77 @@
   color: #49bca6;
   flex-shrink: 0;
 }
+
+/* =====================================
+   LOCKSY DEMO PREVIEW
+===================================== */
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 22px 0;
+  color: #9993ae;
+  font-size: 11px;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #e7e4ef;
+}
+
+.demo-preview-button {
+  width: 100%;
+  min-height: 49px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid #6655ad;
+  border-radius: 10px;
+  color: #55449f;
+  background: #f8f6ff;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.demo-preview-button:hover {
+  background: #efebff;
+  transform: translateY(-1px);
+}
+
+.demo-preview-button:focus-visible {
+  outline: 3px solid rgba(102, 85, 173, 0.25);
+  outline-offset: 3px;
+}
+
+.demo-caption {
+  margin: 10px 0 0;
+  color: #89859b;
+  font-size: 11px;
+  text-align: center;
+}
+
+.demo-banner {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  padding: 11px 16px;
+  color: white;
+  background: #55449f;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* =====================================
+   MOBILE RESPONSIVENESS
+===================================== */
 
 @media (max-width: 750px) {
   .auth-page {
