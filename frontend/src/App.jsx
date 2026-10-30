@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Auth from "./Auth.jsx";
-import "./App.css";
+import "./style.css";
 
 import {
   ShieldCheck,
