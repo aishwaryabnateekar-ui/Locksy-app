@@ -1,3 +1,4 @@
+x
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
@@ -12,12 +13,19 @@ function createToken(user) {
   );
 }
 
-// Register a new account
+// Register with email and password
 router.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    if (!name || !email || !password) {
+    if (
+      typeof name !== "string" ||
+      typeof email !== "string" ||
+      typeof password !== "string" ||
+      !name.trim() ||
+      !email.trim() ||
+      !password
+    ) {
       return res.status(400).json({
         message: "Please enter your name, email and password."
       });
@@ -44,14 +52,13 @@ router.post("/register", async (req, res) => {
     const user = await User.create({
       name: name.trim(),
       email: normalizedEmail,
-      password
+      password,
+      authProvider: "local"
     });
-
-    const token = createToken(user);
 
     return res.status(201).json({
       message: "Account created successfully.",
-      token,
+      token: createToken(user),
       user: {
         id: user._id,
         name: user.name,
@@ -61,18 +68,29 @@ router.post("/register", async (req, res) => {
   } catch (error) {
     console.error("Registration error:", error.message);
 
+    if (error.code === 11000) {
+      return res.status(409).json({
+        message: "An account with this email already exists."
+      });
+    }
+
     return res.status(500).json({
       message: "Unable to create your account."
     });
   }
 });
 
-// Log in to an existing account
+// Login with email and password
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    if (!email || !password) {
+    if (
+      typeof email !== "string" ||
+      typeof password !== "string" ||
+      !email.trim() ||
+      !password
+    ) {
       return res.status(400).json({
         message: "Please enter your email and password."
       });
@@ -88,11 +106,9 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    const token = createToken(user);
-
     return res.status(200).json({
       message: "Login successful.",
-      token,
+      token: createToken(user),
       user: {
         id: user._id,
         name: user.name,
