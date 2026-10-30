@@ -1,4 +1,3 @@
-
 require("dotenv").config();
 
 const express = require("express");
@@ -9,95 +8,73 @@ const mongoose = require("mongoose");
 
 const app = express();
 
-const PORT = process.env.PORT || 5000;
-
-// Security headers
 app.use(helmet());
 
-// Allow requests from the LOCKSY frontend
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173"
-  })
-);
+app.use(cors({
+  origin: process.env.CLIENT_URL || "http://localhost:5173"
+}));
 
-// Parse JSON requests
-app.use(express.json({ limit: "1mb" }));
+app.use(express.json({ limit: "10kb" }));
 
-// Basic API rate limiting
-app.use(
-  "/api",
-  rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 100,
-    standardHeaders: true,
-    legacyHeaders: false,
-    message: {
-      success: false,
-      message: "Too many requests. Please try again later."
-    }
-  })
-);
-
-// Welcome route
-app.get("/", (req, res) => {
-  res.json({
-    success: true,
-    message: "Welcome to LOCKSY API",
-    version: "1.0.0"
-  });
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 100,
+  standardHeaders: "draft-7",
+  legacyHeaders: false,
+  message: {
+    message: "Too many requests. Please try again later."
+  }
 });
+
+app.use("/api", apiLimiter);
+
+// Authentication routes
+app.use("/api/auth", require("./routes/auth"));
 
 // Health check
 app.get("/api/health", (req, res) => {
   res.json({
-    success: true,
-    message: "LOCKSY API is running",
-    database:
-      mongoose.connection.readyState === 1 ? "connected" : "disconnected"
+    status: "OK",
+    message: "LOCKSY backend is running."
   });
 });
 
-// Handle unknown routes
+// Not found
 app.use((req, res) => {
   res.status(404).json({
-    success: false,
-    message: "API route not found"
+    message: "API route not found."
   });
 });
 
-// Global error handler
-app.use((err, req, res, next) => {
-  console.error("Server error:", err.message);
+// Error handler
+app.use((error, req, res, next) => {
+  console.error("Server error:", error.message);
 
   res.status(500).json({
-    success: false,
-    message: "Internal server error"
+    message: "Something went wrong."
   });
 });
 
-// Connect to MongoDB and start server
-async function startServer() {
+// Start server after database connection
+const startServer = async () => {
   try {
-    if (!process.env.JWT_SECRET) {
-      throw new Error("JWT_SECRET is not configured");
-    }
-
-    if (!process.env.MONGODB_URI) {
-      throw new Error("MONGODB_URI is not configured");
+    if (!process.env.MONGODB_URI || !process.env.JWT_SECRET) {
+      throw new Error("MONGODB_URI and JWT_SECRET must be configured.");
     }
 
     await mongoose.connect(process.env.MONGODB_URI);
 
-    console.log("LOCKSY database connected");
+    console.log("LOCKSY MongoDB connected.");
+
+    const PORT = process.env.PORT || 5000;
 
     app.listen(PORT, () => {
       console.log(`LOCKSY server running on port ${PORT}`);
     });
   } catch (error) {
-    console.error("Failed to start LOCKSY:", error.message);
+    console.error("Could not start LOCKSY:", error.message);
     process.exit(1);
   }
-}
+};
 
 startServer();
