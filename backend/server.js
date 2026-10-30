@@ -1,3 +1,4 @@
+
 require("dotenv").config();
 
 const express = require("express");
@@ -31,6 +32,9 @@ app.use("/api", apiLimiter);
 // Authentication routes
 app.use("/api/auth", require("./routes/auth"));
 
+// Google authentication routes
+app.use("/api/auth", require("./routes/googleAuth"));
+
 // Health check
 app.get("/api/health", (req, res) => {
   res.json({
@@ -62,6 +66,10 @@ const startServer = async () => {
       throw new Error("MONGODB_URI and JWT_SECRET must be configured.");
     }
 
+    if (!process.env.GOOGLE_CLIENT_ID) {
+      throw new Error("GOOGLE_CLIENT_ID must be configured.");
+    }
+
     await mongoose.connect(process.env.MONGODB_URI);
 
     console.log("LOCKSY MongoDB connected.");
@@ -78,3 +86,4 @@ const startServer = async () => {
 };
 
 startServer();
+
