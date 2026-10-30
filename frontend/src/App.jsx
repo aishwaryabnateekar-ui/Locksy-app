@@ -1,39 +1,34 @@
 
 import React from "react";
 import {
-  ShieldCheck,
-  LayoutDashboard,
-  FolderLock,
-  Image,
-  Share2,
-  Activity,
-  Settings,
-  Search,
-  Bell,
-  Plus,
-  FileText,
-  CreditCard,
-  GraduationCap,
-  HeartPulse,
-  MoreHorizontal,
-  LockKeyhole,
-  ArrowUpRight,
-  HardDrive,
-  Clock3
+  ShieldCheck, Fingerprint, LockKeyhole, Home, FileText,
+  FolderLock, Share2, Clock, Settings, Search, Bell,
+  Plus, GraduationCap, Landmark, IdCard, HeartPulse,
+  UserRound, Image, FileCheck, ChevronRight, MoreVertical,
+  HardDrive, Activity, CheckCircle2
 } from "lucide-react";
 
 const categories = [
-  { name: "Identity", count: 8, icon: CreditCard, color: "purple" },
-  { name: "Education", count: 12, icon: GraduationCap, color: "blue" },
-  { name: "Insurance", count: 5, icon: HeartPulse, color: "pink" },
-  { name: "Personal", count: 16, icon: FileText, color: "orange" }
+  { name: "Certificates", count: 2, icon: GraduationCap, color: "purple" },
+  { name: "Mark Sheets", count: 3, icon: FileCheck, color: "blue" },
+  { name: "Property", count: 1, icon: Home, color: "teal" },
+  { name: "Bank Accounts", count: 2, icon: Landmark, color: "purple" },
+  { name: "Identity", count: 3, icon: IdCard, color: "blue" },
+  { name: "Insurance", count: 1, icon: HeartPulse, color: "pink" },
+  { name: "Personal", count: 2, icon: UserRound, color: "teal" },
+  { name: "Private Photos", count: 1, icon: Image, color: "purple" }
 ];
 
 const documents = [
-  { name: "Aadhaar Card", type: "PDF document", date: "Today", category: "Identity", icon: CreditCard },
-  { name: "University Certificate", type: "PDF document", date: "Yesterday", category: "Education", icon: GraduationCap },
-  { name: "Health Insurance", type: "PDF document", date: "Oct 24, 2026", category: "Insurance", icon: HeartPulse },
-  { name: "Personal Notes", type: "PDF document", date: "Oct 21, 2026", category: "Personal", icon: FileText }
+  { name: "Degree_Certificate.pdf", type: "Certificate", date: "Today", size: "2.4 MB" },
+  { name: "Marksheet_2023.pdf", type: "Mark Sheets", date: "Yesterday", size: "1.8 MB" },
+  { name: "BankStatement.pdf", type: "Bank Accounts", date: "2 days ago", size: "245 KB" }
+];
+
+const activities = [
+  { title: "Document uploaded", file: "BankStatement.pdf", time: "2 hours ago", icon: Plus },
+  { title: "Section accessed", file: "Marksheet_2023.pdf", time: "5 hours ago", icon: Fingerprint },
+  { title: "Document shared", file: "Property_Doc.pdf", time: "1 day ago", icon: Share2 }
 ];
 
 function App() {
@@ -41,139 +36,175 @@ function App() {
     <div className="app-shell">
       <aside className="sidebar">
         <div className="brand">
-          <div className="brand-icon"><ShieldCheck size={24} /></div>
-          <span>LOCKSY</span>
+          <div className="brand-icon"><ShieldCheck size={25} /></div>
+          <div>
+            <strong>LOCKSY</strong>
+            <small>Your Personal Digital Vault</small>
+          </div>
         </div>
 
-        <div className="workspace-label">WORKSPACE</div>
         <nav className="nav-menu">
-          <a className="nav-item active" href="#dashboard"><LayoutDashboard size={19} /> Dashboard</a>
-          <a className="nav-item" href="#documents"><FolderLock size={19} /> My Vault</a>
-          <a className="nav-item" href="#photos"><Image size={19} /> Photos</a>
-          <a className="nav-item" href="#sharing"><Share2 size={19} /> Shared Files</a>
-          <a className="nav-item" href="#activity"><Activity size={19} /> Activity</a>
+          <a className="nav-item active" href="#home"><Home /> Home</a>
+          <a className="nav-item" href="#documents"><FileText /> My Documents</a>
+          <a className="nav-item" href="#categories"><FolderLock /> Categories</a>
+          <a className="nav-item" href="#sharing"><Share2 /> Secure Share</a>
+          <a className="nav-item" href="#activity"><Clock /> Activity</a>
+          <a className="nav-item" href="#settings"><Settings /> Settings</a>
         </nav>
 
-        <div className="workspace-label tools-label">PREFERENCES</div>
-        <nav className="nav-menu">
-          <a className="nav-item" href="#settings"><Settings size={19} /> Settings</a>
-        </nav>
+        <div className="sidebar-security">
+          <Fingerprint size={27} />
+          <strong>Your data deserves protection</strong>
+          <p>Biometric and password security</p>
+          <span><span className="status-dot" /> Security features</span>
+        </div>
 
-        <div className="sidebar-bottom">
-          <div className="security-card">
-            <div className="security-icon"><LockKeyhole size={18} /></div>
-            <strong>Your vault is private</strong>
-            <p>Your files are protected. Keep your account secure.</p>
-            <span><span className="status-dot"></span> Security active</span>
-          </div>
-          <div className="profile">
-            <div className="avatar">U</div>
-            <div><strong>Your Account</strong><small>Personal workspace</small></div>
-            <MoreHorizontal size={20} />
-          </div>
+        <div className="sidebar-user">
+          <div className="avatar">U</div>
+          <div><strong>Your Account</strong><small>Personal vault</small></div>
         </div>
       </aside>
 
-      <main className="main-content" id="dashboard">
+      <main className="main-content" id="home">
         <header className="topbar">
-          <div className="breadcrumb">Workspace <span>/</span> <strong>Dashboard</strong></div>
+          <label className="search-box">
+            <Search size={18} />
+            <input placeholder="Search documents, categories..." />
+          </label>
           <div className="top-actions">
-            <label className="search-box">
-              <Search size={17} />
-              <input type="search" placeholder="Search your vault..." />
-              <kbd>⌘ K</kbd>
-            </label>
-            <button className="icon-button" aria-label="Notifications"><Bell size={19} /></button>
-            <div className="avatar top-avatar">U</div>
+            <button className="icon-button" aria-label="Notifications"><Bell /></button>
+            <div className="avatar">U</div>
           </div>
         </header>
 
-        <section className="welcome-section">
-          <div>
-            <div className="eyebrow"><span className="status-dot"></span> YOUR PRIVATE SPACE</div>
-            <h1>Welcome to your vault<span>.</span></h1>
-            <p>Everything important, safely stored in one place.</p>
-          </div>
-          <button className="primary-button" onClick={() => alert("File upload will be connected in a later step.")}>
-            <Plus size={18} /> Add new file
-          </button>
-        </section>
+        <div className="dashboard-layout">
+          <div className="dashboard-primary">
+            <section className="welcome-banner">
+              <div>
+                <span className="eyebrow">YOUR PRIVATE DIGITAL VAULT</span>
+                <h1>Welcome to LOCKSY!</h1>
+                <p>Your documents, your control. Always secure.</p>
+              </div>
+              <div className="banner-shield"><ShieldCheck size={55} /></div>
+            </section>
 
-        <section className="stats-grid">
-          <div className="stat-card storage-card">
-            <div className="stat-top"><span>Storage used</span><HardDrive size={19} /></div>
-            <div className="stat-number">2.4 <small>GB <span>of 10 GB</span></small></div>
-            <div className="storage-track"><div className="storage-fill"></div></div>
-            <div className="stat-foot"><span>24% used</span><span>7.6 GB available</span></div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-top"><span>Saved documents</span><FileText size={19} /></div>
-            <div className="stat-number">41</div>
-            <div className="stat-foot"><span className="positive">Your files in one safe place</span></div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-top"><span>Private photos</span><Image size={19} /></div>
-            <div className="stat-number">28</div>
-            <div className="stat-foot"><span>Organized in your albums</span></div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-top"><span>Shared links</span><Share2 size={19} /></div>
-            <div className="stat-number">03</div>
-            <div className="stat-foot"><span>Links currently active</span></div>
-          </div>
-        </section>
+            <section className="section-block" id="categories">
+              <div className="section-heading">
+                <div><h2>Your Categories</h2><p>Every important document has its own place.</p></div>
+                <a href="#documents">View all <ChevronRight size={16} /></a>
+              </div>
 
-        <section className="section-block">
-          <div className="section-heading">
-            <div><h2>Your categories</h2><p>Find what you need, faster.</p></div>
-            <a href="#documents" className="text-link">View all <ArrowUpRight size={15} /></a>
-          </div>
-          <div className="category-grid">
-            {categories.map((item) => {
-              const Icon = item.icon;
-              return (
-                <div className="category-card" key={item.name}>
-                  <div className={`category-icon ${item.color}`}><Icon size={21} /></div>
-                  <div className="category-info"><strong>{item.name}</strong><span>{item.count} files</span></div>
-                  <ArrowUpRight className="category-arrow" size={17} />
-                </div>
-              );
-            })}
-          </div>
-        </section>
+              <div className="category-grid">
+                {categories.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <button className="category-card" key={item.name}
+                      onClick={() => alert(item.name + " section will be connected next.")}>
+                      <span className={`category-icon ${item.color}`}><Icon size={25} /></span>
+                      <strong>{item.name}</strong>
+                      <small>{item.count} files</small>
+                    </button>
+                  );
+                })}
+              </div>
+            </section>
 
-        <section className="section-block documents-section" id="documents">
-          <div className="section-heading">
-            <div><h2>Recent documents</h2><p>Your recently added and accessed files.</p></div>
-            <a href="#documents" className="text-link">See all documents <ArrowUpRight size={15} /></a>
-          </div>
-          <div className="document-table">
-            <div className="table-header">
-              <span>FILE NAME</span><span>CATEGORY</span><span>LAST UPDATED</span><span>SECURITY</span><span></span>
-            </div>
-            {documents.map((doc) => {
-              const Icon = doc.icon;
-              return (
-                <div className="document-row" key={doc.name}>
-                  <div className="file-name">
-                    <div className="file-icon"><Icon size={19} /></div>
-                    <div><strong>{doc.name}</strong><small>{doc.type}</small></div>
+            <section className="section-block" id="documents">
+              <div className="section-heading">
+                <div><h2>Recent Documents</h2><p>Your recently added files.</p></div>
+                <a href="#documents">See all <ChevronRight size={16} /></a>
+              </div>
+
+              <div className="document-list">
+                {documents.map((doc) => (
+                  <div className="document-row" key={doc.name}>
+                    <div className="document-icon"><FileText size={21} /></div>
+                    <div className="document-info">
+                      <strong>{doc.name}</strong>
+                      <small>{doc.date} · {doc.size}</small>
+                    </div>
+                    <span className="document-type">{doc.type}</span>
+                    <LockKeyhole className="document-lock" size={17} />
+                    <button className="more-button" aria-label={`More options for ${doc.name}`}>
+                      <MoreVertical size={19} />
+                    </button>
                   </div>
-                  <span className="file-category">{doc.category}</span>
-                  <span className="file-date"><Clock3 size={14} /> {doc.date}</span>
-                  <span className="secure-label"><LockKeyhole size={13} /> Locked</span>
-                  <button className="more-button" aria-label={`More options for ${doc.name}`}><MoreHorizontal size={19} /></button>
-                </div>
-              );
-            })}
+                ))}
+              </div>
+            </section>
+
+            <button className="primary-button add-document"
+              onClick={() => alert("Document upload will be connected in a later step.")}>
+              <Plus size={19} /> Add Document
+            </button>
           </div>
-        </section>
+
+          <aside className="dashboard-side">
+            <section className="side-card security-overview">
+              <div className="side-heading">
+                <ShieldCheck size={22} />
+                <div><h3>Security Overview</h3><small>Protection settings</small></div>
+              </div>
+              <div className="security-item">
+                <LockKeyhole size={17} /><span>Account password</span><CheckCircle2 />
+              </div>
+              <div className="security-item">
+                <Fingerprint size={17} /><span>Biometric access</span><span className="setup-label">Setup needed</span>
+              </div>
+              <div className="security-item">
+                <FileCheck size={17} /><span>File encryption</span><span className="setup-label">To configure</span>
+              </div>
+              <div className="security-item">
+                <Clock size={17} /><span>Automatic lock</span><span className="setup-label">To configure</span>
+              </div>
+            </section>
+
+            <section className="side-card">
+              <div className="side-heading">
+                <HardDrive size={21} />
+                <div><h3>Storage Usage</h3><small>Sample dashboard data</small></div>
+              </div>
+              <div className="storage-numbers"><strong>2.4 GB</strong><span>of 10 GB</span></div>
+              <div className="storage-track"><div className="storage-fill" /></div>
+              <small className="storage-caption">24% used · 7.6 GB available</small>
+            </section>
+
+            <section className="side-card" id="activity">
+              <div className="section-heading">
+                <div><h3>Recent Activity</h3><small>Latest vault events</small></div>
+                <a href="#activity">View all</a>
+              </div>
+              {activities.map((activity) => {
+                const Icon = activity.icon;
+                return (
+                  <div className="activity-item" key={activity.title}>
+                    <span className="activity-icon"><Icon size={18} /></span>
+                    <div><strong>{activity.title}</strong><small>{activity.file}</small><small>{activity.time}</small></div>
+                  </div>
+                );
+              })}
+            </section>
+
+            <section className="privacy-note">
+              <ShieldCheck size={28} />
+              <strong>Your privacy. Your control.</strong>
+              <p>Keep your important documents organized in one place.</p>
+            </section>
+          </aside>
+        </div>
 
         <footer className="footer">
-          <span>© 2026 LOCKSY. Your privacy, your control.</span>
-          <span><ShieldCheck size={14} /> Privacy-first by design</span>
+          <span>© 2026 LOCKSY · Your Personal Digital Vault</span>
+          <span><Activity size={14} /> Security-first design</span>
         </footer>
       </main>
+
+      <nav className="mobile-nav">
+        <a href="#home"><Home />Home</a>
+        <a href="#categories"><FolderLock />Categories</a>
+        <a href="#activity"><Activity />Activity</a>
+        <a href="#settings"><Settings />Settings</a>
+      </nav>
     </div>
   );
 }
