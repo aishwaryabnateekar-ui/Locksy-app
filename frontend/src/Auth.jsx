@@ -1,10 +1,11 @@
+
 import React, { useState } from "react";
 
 const API_URL = (
   import.meta.env.VITE_API_URL || "http://localhost:5000"
 ).replace(/\/$/, "");
 
-export default function Auth({ onLogin }) {
+export default function Auth({ onLogin, onDemo }) {
   const [isRegister, setIsRegister] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -49,9 +50,7 @@ export default function Auth({ onLogin }) {
         throw new Error(data.message || "Authentication failed.");
       }
 
-      // Temporary session-only token storage for this MVP.
       sessionStorage.setItem("locksyToken", data.token);
-
       onLogin(data.user);
     } catch (err) {
       setError(
@@ -117,7 +116,9 @@ export default function Auth({ onLogin }) {
             />
           </label>
 
-          {error && <p className="auth-error" role="alert">{error}</p>}
+          {error && (
+            <p className="auth-error" role="alert">{error}</p>
+          )}
 
           <button className="auth-submit" type="submit" disabled={loading}>
             {loading
@@ -127,6 +128,26 @@ export default function Auth({ onLogin }) {
                 : "Sign in"}
           </button>
         </form>
+
+        {!isRegister && (
+          <>
+            <div className="auth-divider">
+              <span>OR</span>
+            </div>
+
+            <button
+              className="demo-preview-button"
+              type="button"
+              onClick={onDemo}
+            >
+              <span>👁</span> Preview Dashboard
+            </button>
+
+            <p className="demo-caption">
+              Explore LOCKSY using sample data. No account required.
+            </p>
+          </>
+        )}
 
         <p className="auth-switch">
           {isRegister ? "Already have an account?" : "New to LOCKSY?"}{" "}
