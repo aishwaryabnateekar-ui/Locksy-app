@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Auth from "./Auth.jsx";
 import {
@@ -6,7 +5,7 @@ import {
   FolderLock, Share2, Clock, Settings, Search, Bell,
   Plus, GraduationCap, Landmark, IdCard, HeartPulse,
   UserRound, Image, FileCheck, ChevronRight, MoreVertical,
-  HardDrive, Activity, CheckCircle2, ArrowLeft
+  HardDrive, Activity, ArrowLeft
 } from "lucide-react";
 
 const categories = [
@@ -34,11 +33,24 @@ const activities = [
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isDemo, setIsDemo] = useState(false);
   const [activeCategory, setActiveCategory] = useState(null);
   const [search, setSearch] = useState("");
 
+  const enterDemo = () => {
+    setIsDemo(true);
+    setIsAuthenticated(true);
+  };
+
+  const exitDemo = () => {
+    setIsDemo(false);
+    setIsAuthenticated(false);
+    setActiveCategory(null);
+    setSearch("");
+  };
+
   if (!isAuthenticated) {
-    return <Auth onLogin={() => setIsAuthenticated(true)} />;
+    return <Auth onLogin={() => setIsAuthenticated(true)} onDemo={enterDemo} />;
   }
 
   const filteredDocuments = documents.filter(doc =>
@@ -56,22 +68,21 @@ function App() {
 
     return (
       <div className="app-shell">
+        {isDemo && <div className="demo-banner">DEMO PREVIEW — Sample data only. No real files or security protection are active.</div>}
         <aside className="sidebar">
           <div className="brand">
             <div className="brand-icon"><ShieldCheck size={25} /></div>
             <div><strong>LOCKSY</strong><small>Your Personal Digital Vault</small></div>
           </div>
-
           <nav className="nav-menu">
             <button className="nav-item" onClick={closeCategory}><Home /> Home</button>
             <button className="nav-item active"><FolderLock /> {activeCategory.name}</button>
             <button className="nav-item"><Share2 /> Secure Share</button>
             <button className="nav-item"><Settings /> Settings</button>
           </nav>
-
           <div className="sidebar-user">
             <div className="avatar">U</div>
-            <div><strong>Your Account</strong><small>Personal vault</small></div>
+            <div><strong>Demo Account</strong><small>Preview mode</small></div>
           </div>
         </aside>
 
@@ -80,7 +91,10 @@ function App() {
             <button className="back-button" onClick={closeCategory}>
               <ArrowLeft size={18} /> Back to dashboard
             </button>
-            <div className="top-actions"><Bell /><div className="avatar">U</div></div>
+            <div className="top-actions">
+              {isDemo && <button className="back-button" onClick={exitDemo}>Exit preview</button>}
+              <Bell /><div className="avatar">U</div>
+            </div>
           </header>
 
           <section className="welcome-banner">
@@ -114,11 +128,10 @@ function App() {
           <section className="section-block" style={{ marginTop: 28 }}>
             <div className="section-heading">
               <div><h2>Your Documents</h2><p>Files belonging to this category.</p></div>
-              <button className="primary-button" onClick={() => alert("File upload will be connected in a later step.")}>
+              <button className="primary-button" onClick={() => alert("File upload is not available in preview mode.")}>
                 <Plus size={18} /> Add Document
               </button>
             </div>
-
             <div className="document-list">
               {sectionDocuments.length > 0 ? sectionDocuments.map(doc => (
                 <div className="document-row" key={doc.name}>
@@ -139,7 +152,6 @@ function App() {
             </div>
           </section>
         </main>
-
         <nav className="mobile-nav">
           <button onClick={closeCategory}><Home />Home</button>
           <button><FolderLock />Categories</button>
@@ -152,12 +164,12 @@ function App() {
 
   return (
     <div className="app-shell">
+      {isDemo && <div className="demo-banner">DEMO PREVIEW — Sample data only. No real files or security protection are active.</div>}
       <aside className="sidebar">
         <div className="brand">
           <div className="brand-icon"><ShieldCheck size={25} /></div>
           <div><strong>LOCKSY</strong><small>Your Personal Digital Vault</small></div>
         </div>
-
         <nav className="nav-menu">
           <a className="nav-item active" href="#home"><Home /> Home</a>
           <a className="nav-item" href="#documents"><FileText /> My Documents</a>
@@ -166,17 +178,15 @@ function App() {
           <a className="nav-item" href="#activity"><Clock /> Activity</a>
           <a className="nav-item" href="#settings"><Settings /> Settings</a>
         </nav>
-
         <div className="sidebar-security">
           <Fingerprint size={27} />
           <strong>Your data deserves protection</strong>
           <p>Biometric and password security</p>
           <span><span className="status-dot" /> Security features</span>
         </div>
-
         <div className="sidebar-user">
           <div className="avatar">U</div>
-          <div><strong>Your Account</strong><small>Personal vault</small></div>
+          <div><strong>{isDemo ? "Demo Account" : "Your Account"}</strong><small>{isDemo ? "Preview mode" : "Personal vault"}</small></div>
         </div>
       </aside>
 
@@ -191,6 +201,7 @@ function App() {
             />
           </label>
           <div className="top-actions">
+            {isDemo && <button className="back-button" onClick={exitDemo}>Exit preview</button>}
             <button className="icon-button" aria-label="Notifications"><Bell /></button>
             <div className="avatar">U</div>
           </div>
@@ -212,7 +223,6 @@ function App() {
                 <div><h2>Your Categories</h2><p>Every important document has its own place.</p></div>
                 <span className="category-total">8 categories</span>
               </div>
-
               <div className="category-grid">
                 {categories.map(item => {
                   const CategoryIcon = item.icon;
@@ -232,7 +242,6 @@ function App() {
               <div className="section-heading">
                 <div><h2>Recent Documents</h2><p>Your recently added files.</p></div>
               </div>
-
               <div className="document-list">
                 {filteredDocuments.map(doc => (
                   <div className="document-row" key={doc.name}>
@@ -252,7 +261,7 @@ function App() {
               </div>
             </section>
 
-            <button className="primary-button add-document" onClick={() => alert("File upload will be connected in a later step.")}>
+            <button className="primary-button add-document" onClick={() => alert(isDemo ? "File upload is not available in preview mode." : "File upload will be connected in a later step.")}>
               <Plus size={19} /> Add Document
             </button>
           </div>
@@ -307,7 +316,6 @@ function App() {
           <span><Activity size={14} /> Security-first design</span>
         </footer>
       </main>
-
       <nav className="mobile-nav">
         <a href="#home"><Home />Home</a>
         <a href="#categories"><FolderLock />Categories</a>
