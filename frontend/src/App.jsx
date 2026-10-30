@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import Auth from "./Auth.jsx";
 import "./styles.css";
@@ -41,54 +42,26 @@ const categories = [
 ];
 
 const documents = [
-  {
-    name: "Degree_Certificate.pdf",
-    type: "Certificates",
-    date: "Today",
-    size: "2.4 MB",
-  },
-  {
-    name: "Marksheet_2023.pdf",
-    type: "Mark Sheets",
-    date: "Yesterday",
-    size: "1.8 MB",
-  },
-  {
-    name: "BankStatement.pdf",
-    type: "Bank Accounts",
-    date: "2 days ago",
-    size: "245 KB",
-  },
+  { name: "Degree_Certificate.pdf", type: "Certificates", date: "Today", size: "2.4 MB" },
+  { name: "Marksheet_2023.pdf", type: "Mark Sheets", date: "Yesterday", size: "1.8 MB" },
+  { name: "BankStatement.pdf", type: "Bank Accounts", date: "2 days ago", size: "245 KB" },
 ];
 
 const activities = [
-  {
-    title: "Document uploaded",
-    file: "BankStatement.pdf",
-    time: "2 hours ago",
-    icon: Plus,
-  },
-  {
-    title: "Section accessed",
-    file: "Marksheet_2023.pdf",
-    time: "5 hours ago",
-    icon: Fingerprint,
-  },
-  {
-    title: "Document shared",
-    file: "Property_Doc.pdf",
-    time: "1 day ago",
-    icon: Share2,
-  },
+  { title: "Document uploaded", file: "BankStatement.pdf", time: "2 hours ago", icon: Plus },
+  { title: "Section accessed", file: "Marksheet_2023.pdf", time: "5 hours ago", icon: Fingerprint },
+  { title: "Document shared", file: "Property_Doc.pdf", time: "1 day ago", icon: Share2 },
 ];
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isDemo, setIsDemo] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
   const [activeCategory, setActiveCategory] = useState(null);
   const [search, setSearch] = useState("");
 
   const enterDemo = () => {
+    setCurrentUser(null);
     setIsDemo(true);
     setIsAuthenticated(true);
   };
@@ -96,6 +69,7 @@ function App() {
   const exitDemo = () => {
     setIsDemo(false);
     setIsAuthenticated(false);
+    setCurrentUser(null);
     setActiveCategory(null);
     setSearch("");
   };
@@ -103,16 +77,18 @@ function App() {
   if (!isAuthenticated) {
     return (
       <Auth
-        onLogin={() => setIsAuthenticated(true)}
+        onLogin={(user) => {
+          setCurrentUser(user);
+          setIsDemo(false);
+          setIsAuthenticated(true);
+        }}
         onDemo={enterDemo}
       />
     );
   }
 
   const filteredDocuments = documents.filter((doc) =>
-    `${doc.name} ${doc.type}`
-      .toLowerCase()
-      .includes(search.toLowerCase())
+    `${doc.name} ${doc.type}`.toLowerCase().includes(search.toLowerCase())
   );
 
   const openCategory = (category) => setActiveCategory(category);
@@ -126,13 +102,15 @@ function App() {
     );
   };
 
+  const userName = currentUser?.name || currentUser?.email || "Your Account";
+  const userInitial = userName.charAt(0).toUpperCase();
+
   const Sidebar = () => (
     <aside className="sidebar">
       <div className="brand">
         <div className="brand-icon">
           <ShieldCheck size={25} />
         </div>
-
         <div>
           <strong>LOCKSY</strong>
           <small>Your Personal Digital Vault</small>
@@ -159,7 +137,6 @@ function App() {
               <FileText />
               <span>My Documents</span>
             </a>
-
             <a className="nav-item" href="#categories">
               <FolderLock />
               <span>Categories</span>
@@ -171,12 +148,10 @@ function App() {
           <Share2 />
           <span>Secure Share</span>
         </a>
-
         <a className="nav-item" href="#activity">
           <Clock />
           <span>Activity</span>
         </a>
-
         <a className="nav-item" href="#settings">
           <Settings />
           <span>Settings</span>
@@ -185,11 +160,8 @@ function App() {
 
       <div className="sidebar-security">
         <Fingerprint size={27} />
-
         <strong>Your data deserves protection</strong>
-
         <p>Biometric and password security</p>
-
         <span>
           <span className="status-dot" />
           Security features
@@ -197,15 +169,11 @@ function App() {
       </div>
 
       <div className="sidebar-user">
-        <div className="avatar">U</div>
-
+        <div className="avatar">{isDemo ? "U" : userInitial}</div>
         <div>
-          <strong>
-            {isDemo ? "Demo Account" : "Your Account"}
-          </strong>
-
+          <strong>{isDemo ? "Demo Account" : userName}</strong>
           <small>
-            {isDemo ? "Preview mode" : "Personal vault"}
+            {isDemo ? "Preview mode" : currentUser?.email || "Personal vault"}
           </small>
         </div>
       </div>
@@ -219,16 +187,10 @@ function App() {
           Exit preview
         </button>
       )}
-
-      <button
-        className="icon-button"
-        aria-label="Notifications"
-        type="button"
-      >
+      <button className="icon-button" aria-label="Notifications" type="button">
         <Bell size={19} />
       </button>
-
-      <div className="avatar">U</div>
+      <div className="avatar">{isDemo ? "U" : userInitial}</div>
     </div>
   );
 
@@ -238,17 +200,14 @@ function App() {
         <Home />
         <span>Home</span>
       </a>
-
       <a href="#categories" onClick={closeCategory}>
         <FolderLock />
         <span>Categories</span>
       </a>
-
       <a href="#activity" onClick={closeCategory}>
         <Activity />
         <span>Activity</span>
       </a>
-
       <a href="#settings" onClick={closeCategory}>
         <Settings />
         <span>Settings</span>
@@ -266,7 +225,6 @@ function App() {
 
   if (activeCategory) {
     const CategoryIcon = activeCategory.icon;
-
     const sectionDocuments = filteredDocuments.filter(
       (doc) => doc.type === activeCategory.name
     );
@@ -274,7 +232,6 @@ function App() {
     return (
       <div className="app-shell">
         <DemoBanner />
-
         <Sidebar />
 
         <main className="main-content">
@@ -283,24 +240,16 @@ function App() {
               <ArrowLeft size={17} />
               Back to dashboard
             </button>
-
             <TopActions />
           </header>
 
           <section className="welcome-banner category-banner">
             <div>
               <span className="eyebrow">YOUR PRIVATE SECTION</span>
-
               <h1>{activeCategory.name}</h1>
-
-              <p>
-                Your important files, organized in one place.
-              </p>
+              <p>Your important files, organized in one place.</p>
             </div>
-
-            <div
-              className={`category-icon ${activeCategory.color}`}
-            >
+            <div className={`category-icon ${activeCategory.color}`}>
               <CategoryIcon size={34} />
             </div>
           </section>
@@ -308,12 +257,9 @@ function App() {
           <section className="side-card section-protection">
             <div className="side-heading">
               <LockKeyhole size={23} />
-
               <div>
                 <h3>Section Protection</h3>
-                <small>
-                  Separate PIN and biometric access planned
-                </small>
+                <small>Separate PIN and biometric access planned</small>
               </div>
             </div>
 
@@ -322,7 +268,6 @@ function App() {
               <span>Biometric verification</span>
               <span className="setup-label">Setup needed</span>
             </div>
-
             <div className="security-item">
               <LockKeyhole size={18} />
               <span>Section PIN</span>
@@ -336,11 +281,7 @@ function App() {
                 <h2>Your Documents</h2>
                 <p>Files belonging to this category.</p>
               </div>
-
-              <button
-                className="primary-button"
-                onClick={handleUpload}
-              >
+              <button className="primary-button" onClick={handleUpload}>
                 <Plus size={18} />
                 Add Document
               </button>
@@ -353,18 +294,11 @@ function App() {
                     <div className="document-icon">
                       <FileText size={21} />
                     </div>
-
                     <div className="document-info">
                       <strong>{doc.name}</strong>
-                      <small>
-                        {doc.date} · {doc.size}
-                      </small>
+                      <small>{doc.date} · {doc.size}</small>
                     </div>
-
-                    <LockKeyhole
-                      className="document-lock"
-                      size={17}
-                    />
+                    <LockKeyhole className="document-lock" size={17} />
                   </div>
                 ))
               ) : (
@@ -372,19 +306,15 @@ function App() {
                   <div className="empty-icon">
                     <FileText size={30} />
                   </div>
-
                   <h3>No documents to display yet</h3>
-
                   <p>
-                    Your documents will appear here after file
-                    upload is implemented.
+                    Your documents will appear here after file upload is implemented.
                   </p>
                 </div>
               )}
             </div>
           </section>
         </main>
-
         <MobileNavigation />
       </div>
     );
@@ -393,14 +323,12 @@ function App() {
   return (
     <div className="app-shell">
       <DemoBanner />
-
       <Sidebar />
 
       <main className="main-content" id="home">
         <header className="topbar">
           <label className="search-box">
             <Search size={18} />
-
             <input
               type="search"
               value={search}
@@ -409,7 +337,6 @@ function App() {
               aria-label="Search documents"
             />
           </label>
-
           <TopActions />
         </header>
 
@@ -417,17 +344,10 @@ function App() {
           <div className="dashboard-primary">
             <section className="welcome-banner">
               <div>
-                <span className="eyebrow">
-                  YOUR PRIVATE DIGITAL VAULT
-                </span>
-
+                <span className="eyebrow">YOUR PRIVATE DIGITAL VAULT</span>
                 <h1>Welcome to LOCKSY!</h1>
-
-                <p>
-                  Your documents, your control. Always secure.
-                </p>
+                <p>Your documents, your control. Always secure.</p>
               </div>
-
               <div className="banner-shield">
                 <ShieldCheck size={55} />
               </div>
@@ -437,36 +357,25 @@ function App() {
               <div className="section-heading">
                 <div>
                   <h2>Your Categories</h2>
-                  <p>
-                    Every important document has its own place.
-                  </p>
+                  <p>Every important document has its own place.</p>
                 </div>
-
-                <span className="category-total">
-                  8 categories
-                </span>
+                <span className="category-total">8 categories</span>
               </div>
 
               <div className="category-grid">
                 {categories.map((item) => {
                   const CategoryIcon = item.icon;
-
                   return (
                     <button
                       className="category-card"
                       key={item.name}
                       onClick={() => openCategory(item)}
                     >
-                      <span
-                        className={`category-icon ${item.color}`}
-                      >
+                      <span className={`category-icon ${item.color}`}>
                         <CategoryIcon size={25} />
                       </span>
-
                       <strong>{item.name}</strong>
-
                       <small>{item.count} files</small>
-
                       <ChevronRight size={16} />
                     </button>
                   );
@@ -488,32 +397,18 @@ function App() {
                     <div className="document-icon">
                       <FileText size={21} />
                     </div>
-
                     <div className="document-info">
                       <strong>{doc.name}</strong>
-
-                      <small>
-                        {doc.date} · {doc.size}
-                      </small>
+                      <small>{doc.date} · {doc.size}</small>
                     </div>
-
-                    <span className="document-type">
-                      {doc.type}
-                    </span>
-
-                    <LockKeyhole
-                      className="document-lock"
-                      size={17}
-                    />
-
+                    <span className="document-type">{doc.type}</span>
+                    <LockKeyhole className="document-lock" size={17} />
                     <button
                       className="more-button"
                       aria-label={`More options for ${doc.name}`}
                       type="button"
                       onClick={() =>
-                        alert(
-                          "Document actions are not available in preview mode."
-                        )
+                        alert("Document actions are not available yet.")
                       }
                     >
                       <MoreVertical size={19} />
@@ -525,9 +420,7 @@ function App() {
                   <div className="empty-state">
                     <Search size={28} />
                     <h3>No matching documents</h3>
-                    <p>
-                      Try another document name or category.
-                    </p>
+                    <p>Try another document name or category.</p>
                   </div>
                 )}
               </div>
@@ -546,7 +439,6 @@ function App() {
             <section className="side-card security-overview" id="settings">
               <div className="side-heading">
                 <ShieldCheck size={22} />
-
                 <div>
                   <h3>Security Overview</h3>
                   <small>Protection settings</small>
@@ -556,55 +448,40 @@ function App() {
               <div className="security-item">
                 <LockKeyhole size={17} />
                 <span>Account password</span>
-                <span className="setup-label">
-                  Backend needed
-                </span>
+                <span className="setup-label">Backend needed</span>
               </div>
-
               <div className="security-item">
                 <Fingerprint size={17} />
                 <span>Biometric access</span>
-                <span className="setup-label">
-                  Setup needed
-                </span>
+                <span className="setup-label">Setup needed</span>
               </div>
-
               <div className="security-item">
                 <FileCheck size={17} />
                 <span>File encryption</span>
-                <span className="setup-label">
-                  To configure
-                </span>
+                <span className="setup-label">To configure</span>
               </div>
-
               <div className="security-item">
                 <Clock size={17} />
                 <span>Automatic lock</span>
-                <span className="setup-label">
-                  To configure
-                </span>
+                <span className="setup-label">To configure</span>
               </div>
             </section>
 
             <section className="side-card">
               <div className="side-heading">
                 <HardDrive size={21} />
-
                 <div>
                   <h3>Storage Usage</h3>
                   <small>Sample dashboard data</small>
                 </div>
               </div>
-
               <div className="storage-numbers">
                 <strong>2.4 GB</strong>
                 <span>of 10 GB</span>
               </div>
-
               <div className="storage-track">
                 <div className="storage-fill" />
               </div>
-
               <small className="storage-caption">
                 24% used · 7.6 GB available
               </small>
@@ -620,16 +497,11 @@ function App() {
 
               {activities.map((activity) => {
                 const ActivityIcon = activity.icon;
-
                 return (
-                  <div
-                    className="activity-item"
-                    key={activity.title}
-                  >
+                  <div className="activity-item" key={activity.title}>
                     <span className="activity-icon">
                       <ActivityIcon size={18} />
                     </span>
-
                     <div>
                       <strong>{activity.title}</strong>
                       <small>{activity.file}</small>
@@ -642,21 +514,14 @@ function App() {
 
             <section className="privacy-note">
               <ShieldCheck size={28} />
-
               <strong>Your privacy. Your control.</strong>
-
-              <p>
-                Keep your important documents organized in one place.
-              </p>
+              <p>Keep your important documents organized in one place.</p>
             </section>
           </aside>
         </div>
 
         <footer className="footer">
-          <span>
-            © 2026 LOCKSY · Your Personal Digital Vault
-          </span>
-
+          <span>© 2026 LOCKSY · Your Personal Digital Vault</span>
           <span>
             <Activity size={14} />
             Security-first design
