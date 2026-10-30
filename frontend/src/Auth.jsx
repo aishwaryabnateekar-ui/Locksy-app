@@ -1,90 +1,149 @@
-
 import React, { useState } from "react";
-import { ShieldCheck, LockKeyhole, Mail, User, Eye, EyeOff, Fingerprint } from "lucide-react";
+
+const API_URL = (
+  import.meta.env.VITE_API_URL || "http://localhost:5000"
+).replace(/\/$/, "");
 
 export default function Auth({ onLogin }) {
   const [isRegister, setIsRegister] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
+    setError("");
 
-    if (!email.trim() || !password.trim()) {
-      alert("Please enter your email and password.");
+    if (password.length < 8) {
+      setError("Your password must be at least 8 characters.");
       return;
     }
 
     if (isRegister && !name.trim()) {
-      alert("Please enter your name.");
+      setError("Please enter your name.");
       return;
     }
 
-    alert("Login interface ready. Real account authentication will be connected to the backend next.");
-    if (onLogin) onLogin();
+    setLoading(true);
+
+    try {
+      const endpoint = isRegister ? "register" : "login";
+
+      const response = await fetch(`${API_URL}/api/auth/${endpoint}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          ...(isRegister ? { name: name.trim() } : {}),
+          email: email.trim().toLowerCase(),
+          password
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Authentication failed.");
+      }
+
+      // Temporary session-only token storage for this MVP.
+      sessionStorage.setItem("locksyToken", data.token);
+
+      onLogin(data.user);
+    } catch (err) {
+      setError(
+        err.message === "Failed to fetch"
+          ? "Cannot reach the server. Please try again later."
+          : err.message
+      );
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
     <main className="auth-page">
-      <section className="auth-brand-panel">
-        <div className="brand auth-brand"><ShieldCheck size={31} /> LOCKSY</div>
-        <div className="auth-message">
-          <p className="eyebrow">YOUR PRIVACY. YOUR CONTROL.</p>
-          <h1>Everything important.<br />In one safe place.</h1>
-          <p>Keep your certificates, identity documents, property records and private memories organized in your personal digital vault.</p>
-          <div className="auth-feature"><LockKeyhole size={19} /> Private digital locker</div>
-          <div className="auth-feature"><Fingerprint size={19} /> Biometric sign-in support planned</div>
-        </div>
-        <p className="auth-copyright">LOCKSY · Your privacy matters.</p>
-      </section>
+      <section className="auth-card">
+        <div className="auth-logo">LOCKSY</div>
+        <p className="auth-tagline">Your private digital vault</p>
 
-      <section className="auth-form-panel">
-        <div className="auth-form-wrap">
-          <div className="auth-mobile-brand"><ShieldCheck size={27} /> LOCKSY</div>
-          <div className="auth-heading">
-            <p className="eyebrow">{isRegister ? "CREATE YOUR PRIVATE SPACE" : "WELCOME BACK"}</p>
-            <h2>{isRegister ? "Create your account" : "Sign in to LOCKSY"}</h2>
-            <p>{isRegister ? "Start organizing your important documents." : "Enter your details to access your vault."}</p>
-          </div>
+        <h1>{isRegister ? "Create your account" : "Welcome back"}</h1>
+        <p className="auth-description">
+          {isRegister
+            ? "Create your secure personal vault."
+            : "Sign in to access your private documents."}
+        </p>
 
-          <form onSubmit={handleSubmit}>
-            {isRegister && (
-              <label className="auth-field">
-                Full name
-                <span><User size={17} /><input value={name} onChange={e => setName(e.target.value)} placeholder="Your full name" /></span>
-              </label>
-            )}
-
-            <label className="auth-field">
-              Email address
-              <span><Mail size={17} /><input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" required /></span>
+        <form onSubmit={handleSubmit}>
+          {isRegister && (
+            <label className="auth-label">
+              Full name
+              <input
+                type="text"
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                placeholder="Enter your name"
+                autoComplete="name"
+                required
+              />
             </label>
+          )}
 
-            <label className="auth-field">
-              Password
-              <span>
-                <LockKeyhole size={17} />
-                <input type={showPassword ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} placeholder="Enter your password" required />
-                <button type="button" className="password-toggle" onClick={() => setShowPassword(!showPassword)} aria-label="Toggle password visibility">
-                  {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
-                </button>
-              </span>
-            </label>
+          <label className="auth-label">
+            Email address
+            <input
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="you@example.com"
+              autoComplete="email"
+              required
+            />
+          </label>
 
-            {!isRegister && <div className="auth-options"><label><input type="checkbox" /> Remember me</label><span>Password recovery coming soon</span></div>}
+          <label className="auth-label">
+            Password
+            <input
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="At least 8 characters"
+              autoComplete={isRegister ? "new-password" : "current-password"}
+              minLength={8}
+              required
+            />
+          </label>
 
-            <button className="auth-submit" type="submit">{isRegister ? "Create account" : "Sign in"} <span>→</span></button>
-          </form>
+          {error && <p className="auth-error" role="alert">{error}</p>}
 
-          <div className="auth-switch">
-            {isRegister ? "Already have an account?" : "New to LOCKSY?"}
-            <button onClick={() => setIsRegister(!isRegister)}>{isRegister ? "Sign in" : "Create account"}</button>
-          </div>
+          <button className="auth-submit" type="submit" disabled={loading}>
+            {loading
+              ? "Please wait..."
+              : isRegister
+                ? "Create account"
+                : "Sign in"}
+          </button>
+        </form>
 
-          <div className="auth-security-note"><ShieldCheck size={17} /> Account security features will be connected to the backend.</div>
-        </div>
+        <p className="auth-switch">
+          {isRegister ? "Already have an account?" : "New to LOCKSY?"}{" "}
+          <button
+            type="button"
+            onClick={() => {
+              setIsRegister(!isRegister);
+              setError("");
+            }}
+          >
+            {isRegister ? "Sign in" : "Create account"}
+          </button>
+        </p>
+
+        <p className="auth-security">
+          Your private vault starts here.
+        </p>
       </section>
     </main>
   );
