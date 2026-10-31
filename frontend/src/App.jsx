@@ -1,184 +1,318 @@
-
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Auth from "./Auth.jsx";
 import "./styles.css";
+
 import {
   ShieldCheck, LockKeyhole, Home, FileText, FolderLock,
   Share2, Clock, Settings, Search, Bell, Plus,
   GraduationCap, Landmark, IdCard, HeartPulse, UserRound,
-  Image, FileCheck, ChevronRight, MoreVertical, HardDrive,
-  Activity, Upload, Eye, Copy, Link, Trash2, X,
-  Sparkles, Shield, CheckCircle2, Download, ScanSearch,
-  CalendarClock, Menu, ArrowLeft, ImagePlus, Heart,
+  Image, FileCheck, ChevronRight, Trash2, X,
+  Upload, Menu, ArrowLeft, CheckCircle2, LogOut,
+  FolderPlus, Pencil, Fingerprint, Shield, CalendarClock,
 } from "lucide-react";
 
-const initialCategories = [
-  { name: "Personal ID", count: 0, icon: IdCard, color: "blue" },
-  { name: "Academic", count: 0, icon: GraduationCap, color: "purple" },
-  { name: "Financial", count: 0, icon: Landmark, color: "teal" },
-  { name: "Employment", count: 0, icon: FileCheck, color: "orange" },
-  { name: "Medical", count: 0, icon: HeartPulse, color: "pink" },
-  { name: "Legal", count: 0, icon: FolderLock, color: "orange" },
-  { name: "Travel", count: 0, icon: Image, color: "blue" },
-  { name: "Other", count: 0, icon: UserRound, color: "purple" },
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import {
+  addDoc, collection, deleteDoc, doc, onSnapshot,
+  query, serverTimestamp, updateDoc, where,
+} from "firebase/firestore";
+import {
+  deleteObject, getStorage, ref, uploadBytes,
+} from "firebase/storage";
+import { auth, db } from "./firebase";
+
+const categories = [
+  { name: "Certificates", icon: FileCheck, color: "purple" },
+  { name: "Mark Sheets", icon: GraduationCap, color: "blue" },
+  { name: "Property", icon: Home, color: "teal" },
+  { name: "Bank Accounts", icon: Landmark, color: "purple" },
+  { name: "Identity", icon: IdCard, color: "blue" },
+  { name: "Insurance", icon: ShieldCheck, color: "pink" },
+  { name: "Personal", icon: UserRound, color: "pink" },
+  { name: "Private Photos", icon: Image, color: "teal" },
 ];
 
-function App() {
+const allowedTypes = [
+  "application/pdf",
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+];
+
+export default function App() {
   const [user, setUser] = useState(null);
+  const [authReady, setAuthReady] = useState(false);
   const [page, setPage] = useState("Home");
   const [search, setSearch] = useState("");
   const [documents, setDocuments] = useState([]);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [uploadCategory, setUploadCategory] = useState("Other");
+  const [folders, setFolders] = useState([]);
+  const [selectedFolder, setSelectedFolder] = useState(null);
   const [showUpload, setShowUpload] = useState(false);
-  const [shareFile, setShareFile] = useState(null);
-  const [shareDuration, setShareDuration] = useState("7 Days");
-  const [sharePermission, setSharePermission] = useState("View Only");
-  const [recipient, setRecipient] = useState("");
-  const [shareLink, setShareLink] = useState("");
-  const [redactFile, setRedactFile] = useState(null);
-  const [redactText, setRedactText] = useState("");
-  const [autoDetect, setAutoDetect] = useState(true);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploadCategory, setUploadCategory] = useState("Personal");
+  const [uploadFolder, setUploadFolder] = useState("");
+  const [uploading, setUploading] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [notice, setNotice] = useState("");
-  const [favorites, setFavorites] = useState([]);
-  const [activeAlbum, setActiveAlbum] = useState("All Photos");
+  const [loadingData, setLoadingData] = useState(false);
   const fileInputRef = useRef(null);
-
-  const categories = useMemo(() => {
-    return initialCategories.map((category) => ({
-      ...category,
-      count: documents.filter((doc) => doc.category === category.name).length,
-    }));
-  }, [documents]);
-
-  const filteredDocuments = documents.filter((doc) =>
-    `${doc.name} ${doc.category}`.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const activities = documents.slice(0, 5).map((doc) => ({
-    title: "Document uploaded",
-    file: doc.name,
-    time: "Recently",
-  }));
 
   function showNotice(message) {
     setNotice(message);
-    window.setTimeout(() => setNotice(""), 3000);
+    window.setTimeout(() => setNotice(""), 3500);
   }
 
-  function handleUpload(event) {
+  // Keep the user signed in when the page is refreshed.
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser);
+      setAuthReady(true);
+    });
+    return unsubscribe;
+  }, []);
+
+  // Load only this signed-in user's folders and documents.
+  useEffect(() => {
+    if (!user) {
+      setDocuments([]);
+      setFolders([]);
+      return;
+    }
+
+    setLoadingData(true);
+
+    const docsQuery = query(
+      collection(db, "documents"),
+      where("ownerUid", "==", user.uid)
+    );
+
+    const foldersQuery = query(
+      collection(db, "folders"),
+      where("ownerUid", "==", user.uid)
+    );
+
+    const stopDocuments = onSnapshot(
+      docsQuery,
+      (snapshot) => {
+        setDocuments(
+          snapshot.docs.map((item) => ({ id: item.id, ...item.data() }))
+        );
+        setLoadingData(false);
+      },
+      (error) => {
+        console.error("Documents load error:", error);
+        showNotice("Could not load documents. Check your Firebase rules.");
+        setLoadingData(false);
+      }
+    );
+
+    const stopFolders = onSnapshot(
+      foldersQuery,
+      (snapshot) => {
+        setFolders(
+          snapshot.docs.map((item) => ({ id: item.id, ...item.data() }))
+        );
+      },
+      (error) => {
+        console.error("Folders load error:", error);
+        showNotice("Could not load folders. Check your Firebase rules.");
+      }
+    );
+
+    return () => {
+      stopDocuments();
+      stopFolders();
+    };
+  }, [user]);
+
+  const filteredDocuments = useMemo(() => {
+    const term = search.trim().toLowerCase();
+    return documents.filter((item) =>
+      `${item.name || ""} ${item.category || ""}`
+        .toLowerCase()
+        .includes(term)
+    );
+  }, [documents, search]);
+
+  const userName = user?.displayName || user?.email || "LOCKSY User";
+  const initial = userName.charAt(0).toUpperCase();
+
+  async function createFolder() {
+    const name = window.prompt("Enter a name for your new folder:");
+    if (!name || !name.trim()) return;
+
+    try {
+      await addDoc(collection(db, "folders"), {
+        name: name.trim(),
+        ownerUid: user.uid,
+        createdAt: serverTimestamp(),
+      });
+      showNotice("Folder created successfully.");
+      setPage("Folders");
+    } catch (error) {
+      console.error(error);
+      showNotice("Could not create folder. Check your Firestore rules.");
+    }
+  }
+
+  async function renameFolder(folder) {
+    const name = window.prompt("Enter the new folder name:", folder.name);
+    if (!name || !name.trim() || name.trim() === folder.name) return;
+
+    try {
+      await updateDoc(doc(db, "folders", folder.id), {
+        name: name.trim(),
+        updatedAt: serverTimestamp(),
+      });
+      showNotice("Folder renamed.");
+    } catch (error) {
+      console.error(error);
+      showNotice("Could not rename folder.");
+    }
+  }
+
+  async function deleteFolder(folder) {
+    const hasDocuments = documents.some(
+      (item) => item.folderId === folder.id
+    );
+
+    if (hasDocuments) {
+      showNotice("Move or delete this folder's documents before deleting it.");
+      return;
+    }
+
+    if (!window.confirm(`Delete the folder "${folder.name}"?`)) return;
+
+    try {
+      await deleteDoc(doc(db, "folders", folder.id));
+      if (selectedFolder?.id === folder.id) setSelectedFolder(null);
+      showNotice("Folder deleted.");
+    } catch (error) {
+      console.error(error);
+      showNotice("Could not delete folder.");
+    }
+  }
+
+  function chooseFile(event) {
     const file = event.target.files?.[0];
+    event.target.value = "";
     if (!file) return;
 
-    const allowedTypes = [
-      "application/pdf",
-      "image/jpeg",
-      "image/png",
-      "image/webp",
-    ];
-
     if (!allowedTypes.includes(file.type)) {
-      showNotice("Please choose a PDF, JPG, PNG or WEBP file.");
-      event.target.value = "";
+      showNotice("Choose a PDF, JPG, PNG or WEBP file.");
       return;
     }
 
     if (file.size > 10 * 1024 * 1024) {
-      showNotice("File size must be 10 MB or less.");
-      event.target.value = "";
+      showNotice("The maximum file size is 10 MB.");
       return;
     }
 
     setSelectedFile(file);
     setShowUpload(true);
-    event.target.value = "";
   }
 
-  function saveDocument() {
-    if (!selectedFile) return;
+  async function uploadDocument() {
+    if (!selectedFile || !user || uploading) return;
 
-    const newDocument = {
-      id: `${Date.now()}-${selectedFile.name}`,
-      name: selectedFile.name,
-      category: uploadCategory,
-      size: (selectedFile.size / (1024 * 1024)).toFixed(2) + " MB",
-      date: new Date().toLocaleDateString(),
-      file: selectedFile,
-      url: URL.createObjectURL(selectedFile),
-      type: selectedFile.type,
-    };
+    setUploading(true);
 
-    setDocuments((previous) => [newDocument, ...previous]);
-    setSelectedFile(null);
-    setShowUpload(false);
-    showNotice("Document added to this browser session.");
-  }
+    try {
+      const storage = getStorage();
+      const safeName = selectedFile.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+      const storagePath =
+        `users/${user.uid}/documents/${Date.now()}-${safeName}`;
+      const fileRef = ref(storage, storagePath);
 
-  function deleteDocument(id) {
-    setDocuments((previous) => {
-      const item = previous.find((doc) => doc.id === id);
-      if (item?.url) URL.revokeObjectURL(item.url);
-      return previous.filter((doc) => doc.id !== id);
-    });
-    showNotice("Document removed from this browser session.");
-  }
+      await uploadBytes(fileRef, selectedFile, {
+        contentType: selectedFile.type,
+      });
 
-  function openShare(doc) {
-    setShareFile(doc);
-    setShareLink("");
-    setRecipient("");
-    setPage("Secure Share");
-  }
+      await addDoc(collection(db, "documents"), {
+        name: selectedFile.name,
+        category: uploadCategory,
+        folderId: uploadFolder || null,
+        storagePath,
+        contentType: selectedFile.type,
+        size: selectedFile.size,
+        ownerUid: user.uid,
+        createdAt: serverTimestamp(),
+      });
 
-  function generateShareLink() {
-    if (!shareFile) return;
-    if (!recipient.trim()) {
-      showNotice("Enter the recipient's email address first.");
-      return;
+      setSelectedFile(null);
+      setShowUpload(false);
+      setUploadFolder("");
+      showNotice("Your document was uploaded successfully.");
+    } catch (error) {
+      console.error("Upload error:", error);
+      showNotice(
+        error.code === "storage/unauthorized" ||
+        error.code === "permission-denied"
+          ? "Firebase rules blocked this upload. We need to configure your security rules."
+          : "Upload failed. Check your Firebase Storage and Firestore setup."
+      );
+    } finally {
+      setUploading(false);
     }
-
-    // This is a local preview only, not a real secure sharing link.
-    const previewLink = `${window.location.origin}${window.location.pathname}#share-preview-${encodeURIComponent(shareFile.id)}`;
-    setShareLink(previewLink);
-    showNotice("Preview link created. Server-side sharing is not connected.");
   }
 
-  function copyShareLink() {
-    if (!shareLink) return;
-    navigator.clipboard?.writeText(shareLink)
-      .then(() => showNotice("Link copied."))
-      .catch(() => showNotice("Copy is unavailable in this browser."));
+  async function deleteDocument(item) {
+    if (!window.confirm(`Delete "${item.name}" permanently?`)) return;
+
+    try {
+      const storage = getStorage();
+      if (item.storagePath) {
+        try {
+          await deleteObject(ref(storage, item.storagePath));
+        } catch (storageError) {
+          if (storageError.code !== "storage/object-not-found") {
+            throw storageError;
+          }
+        }
+      }
+
+      await deleteDoc(doc(db, "documents", item.id));
+      showNotice("Document deleted.");
+    } catch (error) {
+      console.error(error);
+      showNotice("Could not delete this document.");
+    }
   }
 
-  function openRedaction(doc) {
-    setRedactFile(doc);
-    setRedactText("");
-    setPage("Redact Document");
+  async function handleSignOut() {
+    try {
+      await signOut(auth);
+      setPage("Home");
+      showNotice("You have signed out.");
+    } catch (error) {
+      showNotice("Could not sign out. Please try again.");
+    }
   }
 
-  function toggleFavorite(id) {
-    setFavorites((previous) =>
-      previous.includes(id)
-        ? previous.filter((item) => item !== id)
-        : [...previous, id]
+  if (!authReady) {
+    return (
+      <div className="auth-page">
+        <div className="empty-state">Loading your LOCKSY vault...</div>
+      </div>
     );
   }
 
   if (!user) {
-    return <Auth onLogin={(loggedInUser) => setUser(loggedInUser)} />;
+    return <Auth onLogin={setUser} />;
   }
 
-  const userName = user.name || user.email || "LOCKSY User";
-  const initial = userName.charAt(0).toUpperCase();
+  function goTo(nextPage) {
+    setPage(nextPage);
+    setSelectedFolder(null);
+    setMenuOpen(false);
+  }
 
   function Sidebar() {
     const links = [
       { label: "Home", icon: Home },
       { label: "My Documents", icon: FileText },
       { label: "Categories", icon: FolderLock },
-      { label: "Secure Share", icon: Share2 },
-      { label: "Memories", icon: Image },
+      { label: "Folders", icon: FolderPlus },
       { label: "Activity", icon: Clock },
       { label: "Settings", icon: Settings },
     ];
@@ -186,10 +320,10 @@ function App() {
     return (
       <aside className={`sidebar locksy-sidebar ${menuOpen ? "sidebar-open" : ""}`}>
         <div className="brand locksy-brand">
-          <div className="brand-icon"><ShieldCheck size={25} /></div>
+          <div className="brand-icon"><ShieldCheck size={27} /></div>
           <div>
             <strong>LOCKSY</strong>
-            <small>Your Private Digital Vault</small>
+            <small>Your Personal Digital Vault</small>
           </div>
           <button className="mobile-menu-close" onClick={() => setMenuOpen(false)}>
             <X size={20} />
@@ -201,11 +335,7 @@ function App() {
             <button
               key={label}
               className={`nav-item ${page === label ? "active" : ""}`}
-              onClick={() => {
-                setPage(label);
-                setMenuOpen(false);
-                setShareFile(null);
-              }}
+              onClick={() => goTo(label)}
             >
               <Icon size={19} />
               <span>{label}</span>
@@ -216,15 +346,14 @@ function App() {
         <div className="sidebar-security">
           <ShieldCheck size={27} />
           <strong>Your privacy matters</strong>
-          <p>Keep your important files organized.</p>
-          <span><span className="status-dot" /> LOCKSY account</span>
+          <p>Your important files, organized in one place.</p>
         </div>
 
         <div className="sidebar-user">
           <div className="avatar">{initial}</div>
           <div>
             <strong>{userName}</strong>
-            <small>{user.email || "Personal vault"}</small>
+            <small>{user.email}</small>
           </div>
         </div>
       </aside>
@@ -244,17 +373,12 @@ function App() {
             type="search"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search documents..."
-            aria-label="Search documents"
+            placeholder="Search documents, categories..."
           />
         </label>
 
         <div className="top-actions">
-          <button
-            className="icon-button"
-            aria-label="Notifications"
-            onClick={() => setPage("Activity")}
-          >
+          <button className="icon-button" onClick={() => goTo("Activity")} aria-label="Activity">
             <Bell size={19} />
           </button>
           <div className="avatar">{initial}</div>
@@ -263,33 +387,22 @@ function App() {
     );
   }
 
-  function DocumentRow({ doc }) {
+  function DocumentRow({ item }) {
     return (
       <div className="document-row locksy-document-row">
-        <div className="document-icon"><FileText size={21} /></div>
-        <div className="document-info">
-          <strong>{doc.name}</strong>
-          <small>{doc.date} · {doc.size}</small>
+        <div className="document-icon">
+          {item.contentType?.startsWith("image/") ? <Image size={21} /> : <FileText size={21} />}
         </div>
-        <span className="document-type">{doc.category}</span>
-        <button
-          className="more-button"
-          title="Redact document"
-          onClick={() => openRedaction(doc)}
-        >
-          <ScanSearch size={18} />
-        </button>
-        <button
-          className="more-button"
-          title="Share document"
-          onClick={() => openShare(doc)}
-        >
-          <Share2 size={18} />
-        </button>
+        <div className="document-info">
+          <strong>{item.name}</strong>
+          <small>
+            {item.category} · {(item.size / (1024 * 1024)).toFixed(2)} MB
+          </small>
+        </div>
         <button
           className="more-button"
           title="Delete document"
-          onClick={() => deleteDocument(doc.id)}
+          onClick={() => deleteDocument(item)}
         >
           <Trash2 size={17} />
         </button>
@@ -302,9 +415,9 @@ function App() {
       <>
         <section className="welcome-banner locksy-welcome">
           <div>
-            <span className="eyebrow">YOUR PRIVATE DIGITAL VAULT</span>
-            <h1>Welcome back, {user.name?.split(" ")[0] || "there"}! 👋</h1>
-            <p>Share only what you need. Keep everything protected.</p>
+            <span className="eyebrow">YOUR PERSONAL DIGITAL VAULT</span>
+            <h1>Welcome back, {userName.split(" ")[0]}! 👋</h1>
+            <p>Your documents, your control. Always secure.</p>
             <button className="primary-button" onClick={() => setShowUpload(true)}>
               <Plus size={17} /> Add Document
             </button>
@@ -315,59 +428,50 @@ function App() {
           </div>
         </section>
 
-        <section className="section-block" id="categories">
+        <section className="section-block">
           <div className="section-heading">
             <div>
               <h2>Your Categories</h2>
               <p>Every important document has its own place.</p>
             </div>
-            <button className="text-link" onClick={() => setPage("Categories")}>
-              View all <ArrowLeft size={15} />
+            <button className="text-link" onClick={() => goTo("Categories")}>
+              View all <ChevronRight size={16} />
             </button>
           </div>
 
           <div className="category-grid locksy-category-grid">
             {categories.map((item) => {
               const Icon = item.icon;
+              const count = documents.filter((file) => file.category === item.name).length;
               return (
-                <button
-                  className="category-card"
-                  key={item.name}
-                  onClick={() => setPage(item.name)}
-                >
-                  <span className={`category-icon ${item.color}`}>
-                    <Icon size={25} />
-                  </span>
+                <button className="category-card" key={item.name} onClick={() => setPage(item.name)}>
+                  <span className={`category-icon ${item.color}`}><Icon size={25} /></span>
                   <strong>{item.name}</strong>
-                  <small>{item.count} files</small>
+                  <small>{count} files</small>
                 </button>
               );
             })}
           </div>
         </section>
 
-        <section className="section-block" id="documents">
+        <section className="section-block">
           <div className="section-heading">
-            <div>
-              <h2>Recent Documents</h2>
-              <p>Your recently added files.</p>
-            </div>
-            <button className="text-link" onClick={() => setPage("My Documents")}>
-              View all <ArrowLeft size={15} />
+            <div><h2>Recent Documents</h2><p>Your latest uploads.</p></div>
+            <button className="text-link" onClick={() => goTo("My Documents")}>
+              View all <ChevronRight size={16} />
             </button>
           </div>
-
           <div className="document-list">
-            {filteredDocuments.slice(0, 5).map((doc) => (
-              <DocumentRow key={doc.id} doc={doc} />
+            {filteredDocuments.slice(0, 5).map((item) => (
+              <DocumentRow key={item.id} item={item} />
             ))}
             {documents.length === 0 && (
               <div className="empty-state">
-                <div className="empty-icon"><FolderLock size={30} /></div>
+                <FolderLock size={32} />
                 <h3>Your vault is ready</h3>
-                <p>Add your first document to get started.</p>
+                <p>Create a folder or add your first document.</p>
                 <button className="primary-button" onClick={() => setShowUpload(true)}>
-                  <Upload size={17} /> Upload a document
+                  <Upload size={17} /> Add a document
                 </button>
               </div>
             )}
@@ -381,16 +485,17 @@ function App() {
     return (
       <section className="section-block">
         <div className="section-heading">
-          <div><h2>Your Categories</h2><p>Explore your personal document folders.</p></div>
+          <div><h2>Your Categories</h2><p>Browse documents by category.</p></div>
         </div>
         <div className="category-grid locksy-category-grid">
           {categories.map((item) => {
             const Icon = item.icon;
+            const count = documents.filter((file) => file.category === item.name).length;
             return (
               <button className="category-card" key={item.name} onClick={() => setPage(item.name)}>
                 <span className={`category-icon ${item.color}`}><Icon size={25} /></span>
                 <strong>{item.name}</strong>
-                <small>{item.count} files</small>
+                <small>{count} files</small>
               </button>
             );
           })}
@@ -399,217 +504,46 @@ function App() {
     );
   }
 
-  function DocumentsPage() {
+  function FoldersPage() {
     return (
       <section className="section-block">
         <div className="section-heading">
-          <div><h2>My Documents</h2><p>Manage your uploaded files.</p></div>
-          <button className="primary-button" onClick={() => setShowUpload(true)}>
-            <Plus size={17} /> Add Document
+          <div><h2>My Folders</h2><p>Create and organize your own folders.</p></div>
+          <button className="primary-button" onClick={createFolder}>
+            <FolderPlus size={17} /> Create Folder
           </button>
         </div>
-        <div className="document-list">
-          {filteredDocuments.map((doc) => <DocumentRow key={doc.id} doc={doc} />)}
-          {filteredDocuments.length === 0 && (
-            <div className="empty-state">
-              <FileText size={30} />
-              <h3>No documents found</h3>
-              <p>Upload a document or change your search.</p>
-            </div>
-          )}
-        </div>
-      </section>
-    );
-  }
 
-  function CategoryPage({ category }) {
-    const categoryDocs = filteredDocuments.filter((doc) => doc.category === category);
-    return (
-      <section className="section-block">
-        <button className="back-button" onClick={() => setPage("Categories")}>
-          <ArrowLeft size={17} /> Back to categories
-        </button>
-        <div className="section-heading">
-          <div><h2>{category}</h2><p>Your files in this category.</p></div>
-          <button className="primary-button" onClick={() => setShowUpload(true)}>
-            <Plus size={17} /> Add Document
-          </button>
-        </div>
-        <div className="document-list">
-          {categoryDocs.map((doc) => <DocumentRow key={doc.id} doc={doc} />)}
-          {categoryDocs.length === 0 && (
-            <div className="empty-state">
-              <FolderLock size={30} />
-              <h3>This folder is empty</h3>
-              <p>Add a document to this category.</p>
-            </div>
-          )}
-        </div>
-      </section>
-    );
-  }
-
-  function SharePage() {
-    return (
-      <section className="section-block">
-        <div className="section-heading">
-          <div><h2>Secure Sharing</h2><p>Prepare a document to share with someone.</p></div>
-        </div>
-        <div className="side-card share-panel">
-          <div className="share-success-icon"><ShieldCheck size={45} /></div>
-          <h2>{shareFile ? "Your document is selected" : "Share with confidence"}</h2>
-          <p>{shareFile?.name || "Choose a document to prepare a sharing request."}</p>
-
-          {!shareFile ? (
-            <div className="document-list">
-              {documents.map((doc) => (
-                <button className="document-row" key={doc.id} onClick={() => setShareFile(doc)}>
-                  <FileText size={20} />
-                  <strong>{doc.name}</strong>
-                  <ChevronRight size={18} />
-                </button>
-              ))}
-              {documents.length === 0 && <p>Upload a document before sharing.</p>}
-            </div>
-          ) : (
-            <>
-              <label className="auth-label">
-                Access duration
-                <select value={shareDuration} onChange={(e) => setShareDuration(e.target.value)}>
-                  <option>1 Day</option><option>7 Days</option><option>30 Days</option>
-                </select>
-              </label>
-              <label className="auth-label">
-                View permission
-                <select value={sharePermission} onChange={(e) => setSharePermission(e.target.value)}>
-                  <option>View Only</option><option>Download Allowed</option>
-                </select>
-              </label>
-              <label className="auth-label">
-                Recipient email
-                <input value={recipient} onChange={(e) => setRecipient(e.target.value)} placeholder="recipient@example.com" type="email" />
-              </label>
-              <button className="primary-button" onClick={generateShareLink}>
-                <Link size={17} /> Generate preview link
+        <div className="category-grid locksy-category-grid">
+          {folders.map((folder) => (
+            <div className="category-card folder-card" key={folder.id}>
+              <button className="folder-open" onClick={() => {
+                setSelectedFolder(folder);
+                setPage("Folder Details");
+              }}>
+                <span className="category-icon teal"><FolderLock size={25} /></span>
+                <strong>{folder.name}</strong>
+                <small>{documents.filter((item) => item.folderId === folder.id).length} documents</small>
               </button>
-              {shareLink && (
-                <div className="share-link-result">
-                  <p>Preview link (not a protected sharing link):</p>
-                  <input readOnly value={shareLink} />
-                  <button className="primary-button" onClick={copyShareLink}><Copy size={16} /> Copy link</button>
-                </div>
-              )}
-            </>
-          )}
-          <p className="security-disclaimer">
-            Secure, expiring server-side links are not connected yet. Do not use this preview link to share private files.
-          </p>
-        </div>
-      </section>
-    );
-  }
-
-  function RedactPage() {
-    return (
-      <section className="section-block">
-        <button className="back-button" onClick={() => setPage("My Documents")}>
-          <ArrowLeft size={17} /> Back to documents
-        </button>
-        <div className="section-heading">
-          <div><h2>Redact Document</h2><p>Prepare a private copy before sharing.</p></div>
-        </div>
-
-        <div className="side-card redaction-panel">
-          {redactFile ? (
-            <>
-              <div className="redaction-document">
-                <div className="redaction-paper">
-                  <ShieldCheck size={24} />
-                  <h3>{redactFile.name}</h3>
-                  <p>Document preview</p>
-                  <div className="redaction-line" />
-                  <div className="redaction-line short" />
-                  <div className="redaction-line" />
-                  <div className="redaction-line medium" />
-                  <div className="redaction-line" />
-                </div>
-                <span className="sensitive-label"><ShieldCheck size={15} /> Private document</span>
-              </div>
-
-              <div className="redaction-controls">
-                <label className="toggle-row">
-                  <span><Sparkles size={18} /> Auto detect (preview)</span>
-                  <input type="checkbox" checked={autoDetect} onChange={(e) => setAutoDetect(e.target.checked)} />
-                </label>
-                <label className="auth-label">
-                  Text to mark for redaction
-                  <input value={redactText} onChange={(e) => setRedactText(e.target.value)} placeholder="Enter sensitive text to hide" />
-                </label>
-                <div className="redacted-preview">
-                  <strong>Redacted preview</strong>
-                  <p>{redactText ? `Original text: ${redactText}` : "No text selected for redaction yet."}</p>
-                  <div className="redaction-black-bar" />
-                </div>
-                <p className="security-disclaimer">
-                  This is a visual planning preview only. It does not modify or permanently redact the original file.
-                </p>
-              </div>
-            </>
-          ) : (
-            <div className="empty-state">
-              <ScanSearch size={35} />
-              <h3>Select a document</h3>
-              <p>Choose a document to prepare its redaction preview.</p>
-              {documents.map((doc) => (
-                <button className="document-row" key={doc.id} onClick={() => setRedactFile(doc)}>
-                  <FileText size={18} /> {doc.name}
+              <div className="folder-actions">
+                <button className="more-button" title="Rename folder" onClick={() => renameFolder(folder)}>
+                  <Pencil size={16} />
                 </button>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-    );
-  }
-
-  function MemoriesPage() {
-    const photos = documents.filter((doc) => doc.type?.startsWith("image/"));
-    return (
-      <section className="section-block">
-        <div className="section-heading">
-          <div><h2>Memories</h2><p>Your private photo collection.</p></div>
-          <button className="primary-button" onClick={() => fileInputRef.current?.click()}>
-            <ImagePlus size={17} /> Add photo
-          </button>
-        </div>
-
-        <div className="memory-tabs">
-          {["All Photos", "Favorites", "Albums"].map((tab) => (
-            <button className={activeAlbum === tab ? "selected" : ""} key={tab} onClick={() => setActiveAlbum(tab)}>
-              {tab}
-            </button>
-          ))}
-        </div>
-
-        <div className="memory-grid">
-          {photos.filter((photo) => activeAlbum !== "Favorites" || favorites.includes(photo.id)).map((photo) => (
-            <div className="memory-card" key={photo.id}>
-              <img src={photo.url} alt={photo.name} />
-              <button className="favorite-button" onClick={() => toggleFavorite(photo.id)}>
-                <Heart size={18} fill={favorites.includes(photo.id) ? "currentColor" : "none"} />
-              </button>
-              <small>{photo.name}</small>
+                <button className="more-button" title="Delete folder" onClick={() => deleteFolder(folder)}>
+                  <Trash2 size={16} />
+                </button>
+              </div>
             </div>
           ))}
         </div>
 
-        {photos.length === 0 && (
+        {folders.length === 0 && (
           <div className="empty-state">
-            <Image size={35} />
-            <h3>Your memories belong here</h3>
-            <p>Upload an image to begin your private gallery.</p>
-            <button className="primary-button" onClick={() => fileInputRef.current?.click()}>
-              <Plus size={17} /> Add a photo
+            <FolderPlus size={35} />
+            <h3>No folders yet</h3>
+            <p>Create your first folder to organize your documents.</p>
+            <button className="primary-button" onClick={createFolder}>
+              <Plus size={17} /> Create your first folder
             </button>
           </div>
         )}
@@ -617,20 +551,85 @@ function App() {
     );
   }
 
-  function ActivityPage() {
+  function DocumentsPage() {
     return (
       <section className="section-block">
         <div className="section-heading">
-          <div><h2>Activity Log</h2><p>Recent activity in this browser session.</p></div>
+          <div><h2>My Documents</h2><p>Files stored in your LOCKSY account.</p></div>
+          <button className="primary-button" onClick={() => setShowUpload(true)}>
+            <Plus size={17} /> Add Document
+          </button>
         </div>
-        <div className="side-card">
-          {activities.length === 0 && <p>No activity recorded yet.</p>}
-          {activities.map((activity, index) => (
-            <div className="activity-item" key={`${activity.file}-${index}`}>
+        <div className="document-list">
+          {filteredDocuments.map((item) => <DocumentRow key={item.id} item={item} />)}
+          {filteredDocuments.length === 0 && (
+            <div className="empty-state"><FileText size={32} /><h3>No documents found</h3><p>Upload a document or change your search.</p></div>
+          )}
+        </div>
+      </section>
+    );
+  }
+
+  function FolderDetailsPage() {
+    const folderDocs = documents.filter((item) => item.folderId === selectedFolder?.id);
+    return (
+      <section className="section-block">
+        <button className="back-button" onClick={() => goTo("Folders")}>
+          <ArrowLeft size={17} /> Back to folders
+        </button>
+        <div className="section-heading">
+          <div><h2>{selectedFolder?.name || "Folder"}</h2><p>Documents in this folder.</p></div>
+          <button className="primary-button" onClick={() => {
+            setUploadFolder(selectedFolder?.id || "");
+            setShowUpload(true);
+          }}>
+            <Plus size={17} /> Add Document
+          </button>
+        </div>
+        <div className="document-list">
+          {folderDocs.map((item) => <DocumentRow key={item.id} item={item} />)}
+          {folderDocs.length === 0 && <div className="empty-state"><FolderLock size={32} /><h3>This folder is empty</h3><p>Add a document to this folder.</p></div>}
+        </div>
+      </section>
+    );
+  }
+
+  function CategoryDetailsPage({ category }) {
+    const items = filteredDocuments.filter((item) => item.category === category);
+    return (
+      <section className="section-block">
+        <button className="back-button" onClick={() => goTo("Categories")}>
+          <ArrowLeft size={17} /> Back to categories
+        </button>
+        <div className="section-heading">
+          <div><h2>{category}</h2><p>Documents in this category.</p></div>
+          <button className="primary-button" onClick={() => {
+            setUploadCategory(category);
+            setShowUpload(true);
+          }}>
+            <Plus size={17} /> Add Document
+          </button>
+        </div>
+        <div className="document-list">
+          {items.map((item) => <DocumentRow key={item.id} item={item} />)}
+          {items.length === 0 && <div className="empty-state"><FolderLock size={32} /><h3>No documents here yet</h3><p>Add a document to this category.</p></div>}
+        </div>
+      </section>
+    );
+  }
+
+  function ActivityPage() {
+    return (
+      <section className="section-block">
+        <div className="section-heading"><div><h2>Activity</h2><p>Your recent uploaded documents.</p></div></div>
+        <div className="document-list">
+          {documents.slice(0, 10).map((item) => (
+            <div className="activity-item" key={item.id}>
               <span className="activity-icon"><Upload size={18} /></span>
-              <div><strong>{activity.title}</strong><small>{activity.file}</small><small>{activity.time}</small></div>
+              <div><strong>Document uploaded</strong><small>{item.name}</small></div>
             </div>
           ))}
+          {documents.length === 0 && <div className="empty-state">No activity yet.</div>}
         </div>
       </section>
     );
@@ -639,21 +638,15 @@ function App() {
   function SettingsPage() {
     return (
       <section className="section-block">
-        <div className="section-heading">
-          <div><h2>Settings</h2><p>Your LOCKSY account and protection preferences.</p></div>
-        </div>
+        <div className="section-heading"><div><h2>Settings</h2><p>Your account and protection settings.</p></div></div>
         <div className="side-card settings-panel">
-          <div className="side-heading"><ShieldCheck size={24} /><div><h3>Account</h3><small>{user.email}</small></div></div>
-          <div className="security-item"><LockKeyhole size={18} /><span>Google sign-in</span><span className="setup-label">Connected at login</span></div>
+          <div className="side-heading"><ShieldCheck size={24} /><div><h3>LOCKSY Account</h3><small>{user.email}</small></div></div>
+          <div className="security-item"><LockKeyhole size={18} /><span>Google sign-in</span><span className="setup-label">Connected</span></div>
           <div className="security-item"><Fingerprint size={18} /><span>Biometric access</span><span className="setup-label">Not configured</span></div>
           <div className="security-item"><Shield size={18} /><span>File encryption</span><span className="setup-label">Not configured</span></div>
           <div className="security-item"><CalendarClock size={18} /><span>Automatic lock</span><span className="setup-label">Not configured</span></div>
-          <p className="security-disclaimer">Advanced protection settings will become available after their backend services are implemented.</p>
-          <button className="back-button" onClick={() => {
-            sessionStorage.removeItem("locksyToken");
-            setUser(null);
-            setPage("Home");
-          }}>Sign out</button>
+          <p className="security-disclaimer">Biometric access, encryption and automatic locking still need separate implementation.</p>
+          <button className="back-button" onClick={handleSignOut}><LogOut size={17} /> Sign out</button>
         </div>
       </section>
     );
@@ -663,33 +656,45 @@ function App() {
     if (!showUpload) return null;
 
     return (
-      <div className="modal-backdrop" onClick={() => setShowUpload(false)}>
-        <div className="upload-modal" onClick={(e) => e.stopPropagation()}>
-          <button className="modal-close" onClick={() => setShowUpload(false)}><X size={20} /></button>
+      <div className="modal-backdrop" onClick={() => !uploading && setShowUpload(false)}>
+        <div className="upload-modal" onClick={(event) => event.stopPropagation()}>
+          <button className="modal-close" onClick={() => setShowUpload(false)} disabled={uploading}><X size={20} /></button>
           <div className="upload-modal-icon"><Upload size={27} /></div>
           <h2>Add to your vault</h2>
-          <p>Select a document or image. Maximum size: 10 MB.</p>
+          <p>Choose a PDF or image. Maximum size: 10 MB.</p>
+
           <button className="upload-dropzone" onClick={() => fileInputRef.current?.click()}>
             <Upload size={25} />
-            <strong>{selectedFile ? selectedFile.name : "Choose a file"}</strong>
+            <strong>{selectedFile?.name || "Choose a file"}</strong>
             <small>PDF, JPG, PNG or WEBP</small>
           </button>
+
           <label className="auth-label">
-            Save in category
-            <select value={uploadCategory} onChange={(e) => setUploadCategory(e.target.value)}>
-              {initialCategories.map((category) => <option key={category.name}>{category.name}</option>)}
+            Category
+            <select value={uploadCategory} onChange={(event) => setUploadCategory(event.target.value)}>
+              {categories.map((item) => <option key={item.name}>{item.name}</option>)}
+              <option>Other</option>
             </select>
           </label>
-          <button className="primary-button" disabled={!selectedFile} onClick={saveDocument}>
-            <CheckCircle2 size={17} /> Add to vault
+
+          <label className="auth-label">
+            Save in folder (optional)
+            <select value={uploadFolder} onChange={(event) => setUploadFolder(event.target.value)}>
+              <option value="">No folder</option>
+              {folders.map((folder) => <option key={folder.id} value={folder.id}>{folder.name}</option>)}
+            </select>
+          </label>
+
+          <button className="primary-button" disabled={!selectedFile || uploading} onClick={uploadDocument}>
+            <CheckCircle2 size={17} /> {uploading ? "Uploading..." : "Upload to LOCKSY"}
           </button>
-          <p className="security-disclaimer">Files currently stay only in this browser session. Permanent secure storage is not connected yet.</p>
+          <p className="security-disclaimer">Uploads use your Firebase account. Security rules must be configured before storing sensitive documents.</p>
         </div>
       </div>
     );
   }
 
-  const isCategory = initialCategories.some((item) => item.name === page);
+  const categoryPage = categories.some((item) => item.name === page);
 
   return (
     <div className="app-shell locksy-app-shell">
@@ -701,17 +706,16 @@ function App() {
         <div className="locksy-page-content">
           {page === "Home" && <HomePage />}
           {page === "Categories" && <CategoriesPage />}
+          {page === "Folders" && <FoldersPage />}
+          {page === "Folder Details" && <FolderDetailsPage />}
           {page === "My Documents" && <DocumentsPage />}
-          {page === "Secure Share" && <SharePage />}
-          {page === "Redact Document" && <RedactPage />}
-          {page === "Memories" && <MemoriesPage />}
           {page === "Activity" && <ActivityPage />}
           {page === "Settings" && <SettingsPage />}
-          {isCategory && <CategoryPage category={page} />}
+          {categoryPage && <CategoryDetailsPage category={page} />}
         </div>
 
         <footer className="footer">
-          <span>© 2026 LOCKSY · Your Private Digital Vault</span>
+          <span>© 2026 LOCKSY · Your Personal Digital Vault</span>
           <span><ShieldCheck size={14} /> Privacy-first design</span>
         </footer>
       </main>
@@ -721,7 +725,7 @@ function App() {
         type="file"
         accept=".pdf,image/jpeg,image/png,image/webp"
         hidden
-        onChange={handleUpload}
+        onChange={chooseFile}
       />
 
       <UploadModal />
@@ -731,11 +735,11 @@ function App() {
       <nav className="mobile-nav locksy-mobile-nav">
         {[
           { label: "Home", icon: Home },
-          { label: "Memories", icon: Image },
-          { label: "Secure Share", icon: Share2 },
+          { label: "My Documents", icon: FileText },
+          { label: "Folders", icon: FolderLock },
           { label: "Settings", icon: Settings },
         ].map(({ label, icon: Icon }) => (
-          <button key={label} onClick={() => setPage(label)} className={page === label ? "active" : ""}>
+          <button key={label} onClick={() => goTo(label)} className={page === label ? "active" : ""}>
             <Icon size={20} /><span>{label}</span>
           </button>
         ))}
@@ -743,5 +747,3 @@ function App() {
     </div>
   );
 }
-
-export default App;
