@@ -312,7 +312,16 @@ export default function App() {
             <>
               <section className="locksy-welcome">
                 <div><h1>Welcome back, Aishwarya! ✨</h1><p>Your important documents, organized and close at hand.</p></div>
-                <ShieldCheck className="locksy-welcome-icon" size={40} />
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+  <button
+    className="locksy-primary"
+    onClick={() => fileRef.current?.click()}
+  >
+    <Plus size={15} />
+    Add Document
+  </button>
+  <ShieldCheck className="locksy-welcome-icon" size={40} />
+</div>
               </section>
 
               <section>
