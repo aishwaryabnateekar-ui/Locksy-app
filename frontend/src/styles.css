@@ -808,71 +808,73 @@ body::after {
   }
 }
 
-
 /* =====================================
-   LOCKSY — VISIBLE FLOATING ANIMATIONS
+   LOCKSY — MAGICAL FLOATING BACKGROUND
 ===================================== */
 
-body::before,
-body::after {
-  content: "✦";
+.locksy-bg-effects {
   position: fixed;
-  z-index: 9999;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
   pointer-events: none;
-  font-size: 32px;
-  color: #9670ff;
-  text-shadow: 0 0 12px #a78bfa, 0 0 25px #a78bfa;
-  animation: locksyStarMove 5s ease-in-out infinite;
 }
 
-body::before {
-  top: 17%;
-  right: 10%;
+.locksy-star {
+  position: absolute;
+  color: #9874ff;
+  text-shadow: 0 0 12px #a78bfa, 0 0 24px #a78bfa;
+  animation: locksyStarFloat 5s ease-in-out infinite;
 }
 
-body::after {
-  content: "✧";
-  left: 8%;
-  bottom: 18%;
-  color: #10bfb2;
-  text-shadow: 0 0 12px #10bfb2, 0 0 25px #10bfb2;
+.locksy-star:nth-child(1) { top: 10%; left: 12%; font-size: 30px; }
+.locksy-star:nth-child(2) { top: 25%; right: 15%; font-size: 38px; color: #12bbae; animation-delay: 1s; }
+.locksy-star:nth-child(3) { top: 48%; left: 7%; font-size: 25px; animation-delay: 2s; }
+.locksy-star:nth-child(4) { top: 65%; right: 9%; font-size: 34px; color: #12bbae; animation-delay: 1.5s; }
+.locksy-star:nth-child(5) { top: 82%; left: 24%; font-size: 28px; animation-delay: 3s; }
+.locksy-star:nth-child(6) { top: 12%; right: 38%; font-size: 23px; animation-delay: 2.5s; }
+.locksy-star:nth-child(7) { top: 43%; right: 32%; font-size: 32px; animation-delay: 1.8s; }
+.locksy-star:nth-child(8) { bottom: 8%; right: 35%; font-size: 26px; color: #12bbae; animation-delay: 3.5s; }
+
+.locksy-orb {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid #a78bfa66;
+  background: #a78bfa20;
+  box-shadow: 0 0 35px #a78bfa30;
+  animation: locksyOrbFloat 12s ease-in-out infinite alternate;
+}
+
+.locksy-orb:nth-child(9) {
+  width: 110px; height: 110px;
+  top: 20%; left: 28%;
+}
+
+.locksy-orb:nth-child(10) {
+  width: 75px; height: 75px;
+  bottom: 18%; left: 12%;
+  border-color: #12bbae88;
+  background: #12bbae20;
   animation-delay: 2s;
 }
 
-/* Floating glowing circles */
-
-.locksy-bg-circle {
-  position: fixed;
-  z-index: 0;
-  pointer-events: none;
-  border-radius: 50%;
-  animation: locksyCircleMove 12s ease-in-out infinite alternate;
+.locksy-orb:nth-child(11) {
+  width: 135px; height: 135px;
+  right: 20%; bottom: 8%;
+  animation-delay: 4s;
 }
 
-.locksy-circle-one {
-  width: 125px;
-  height: 125px;
-  top: 18%;
-  left: 4%;
-  border: 2px solid #a78bfa88;
-  background: #a78bfa30;
-  box-shadow: 0 0 35px #a78bfa40;
+.locksy-orb:nth-child(12) {
+  width: 60px; height: 60px;
+  top: 8%; right: 8%;
+  border-color: #12bbae88;
+  background: #12bbae20;
+  animation-delay: 1s;
 }
 
-.locksy-circle-two {
-  width: 90px;
-  height: 90px;
-  right: 5%;
-  bottom: 15%;
-  border: 2px solid #12bbae88;
-  background: #12bbae30;
-  box-shadow: 0 0 35px #12bbae40;
-  animation-delay: 3s;
-}
-
-@keyframes locksyStarMove {
+@keyframes locksyStarFloat {
   0%, 100% {
-    transform: translateY(0) rotate(0deg) scale(1);
+    transform: translateY(0) rotate(0deg) scale(.9);
     opacity: .65;
   }
   50% {
@@ -881,12 +883,12 @@ body::after {
   }
 }
 
-@keyframes locksyCircleMove {
-  from {
-    transform: translate(0, 0);
-  }
-  to {
-    transform: translate(35px, -45px);
-  }
+@keyframes locksyOrbFloat {
+  from { transform: translate(0, 0); }
+  to { transform: translate(35px, -35px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .locksy-star, .locksy-orb { animation: none; }
 }
 
