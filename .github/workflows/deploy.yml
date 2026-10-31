@@ -1,3 +1,4 @@
+
 name: Deploy LOCKSY to GitHub Pages
 
 on:
@@ -30,7 +31,7 @@ jobs:
 
       - name: Install frontend dependencies
         working-directory: frontend
-        run: npm install
+        run: npm install --package-lock=false
 
       - name: Build LOCKSY
         working-directory: frontend
