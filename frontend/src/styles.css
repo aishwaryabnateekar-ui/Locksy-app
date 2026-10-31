@@ -808,108 +808,85 @@ body::after {
   }
 }
 
+
 /* =====================================
-   LOCKSY — FLOATING SPARKLES & CIRCLES
+   LOCKSY — VISIBLE FLOATING ANIMATIONS
 ===================================== */
 
 body::before,
 body::after {
   content: "✦";
   position: fixed;
-  z-index: 5;
+  z-index: 9999;
   pointer-events: none;
-  font-size: 19px;
-  color: #9875ff;
-  text-shadow: 0 0 10px #a78bfa;
-  animation: locksyFloat 7s ease-in-out infinite;
+  font-size: 32px;
+  color: #9670ff;
+  text-shadow: 0 0 12px #a78bfa, 0 0 25px #a78bfa;
+  animation: locksyStarMove 5s ease-in-out infinite;
 }
 
 body::before {
-  top: 18%;
-  right: 9%;
+  top: 17%;
+  right: 10%;
 }
 
 body::after {
   content: "✧";
-  bottom: 20%;
   left: 8%;
-  color: #12bbae;
-  animation-delay: 3s;
+  bottom: 18%;
+  color: #10bfb2;
+  text-shadow: 0 0 12px #10bfb2, 0 0 25px #10bfb2;
+  animation-delay: 2s;
 }
 
-/* Soft floating circles */
+/* Floating glowing circles */
 
-body {
-  background-image:
-    radial-gradient(circle at 12% 35%, #a78bfa18 0, transparent 130px),
-    radial-gradient(circle at 88% 65%, #12bbae18 0, transparent 150px);
-  background-attachment: fixed;
-}
-
-#root {
-  position: relative;
-  isolation: isolate;
-}
-
-#root::before,
-#root::after {
-  content: "";
+.locksy-bg-circle {
   position: fixed;
-  z-index: -1;
+  z-index: 0;
   pointer-events: none;
   border-radius: 50%;
-  filter: blur(2px);
-  animation: locksyCircleFloat 13s ease-in-out infinite alternate;
+  animation: locksyCircleMove 12s ease-in-out infinite alternate;
 }
 
-#root::before {
-  width: 115px;
-  height: 115px;
-  top: 16%;
-  left: 3%;
-  background: #9b7aff18;
-  border: 1px solid #9b7aff30;
+.locksy-circle-one {
+  width: 125px;
+  height: 125px;
+  top: 18%;
+  left: 4%;
+  border: 2px solid #a78bfa88;
+  background: #a78bfa30;
+  box-shadow: 0 0 35px #a78bfa40;
 }
 
-#root::after {
-  width: 85px;
-  height: 85px;
+.locksy-circle-two {
+  width: 90px;
+  height: 90px;
   right: 5%;
-  bottom: 12%;
-  background: #12bbae18;
-  border: 1px solid #12bbae35;
+  bottom: 15%;
+  border: 2px solid #12bbae88;
+  background: #12bbae30;
+  box-shadow: 0 0 35px #12bbae40;
   animation-delay: 3s;
 }
 
-/* Smooth animations */
-
-@keyframes locksyFloat {
+@keyframes locksyStarMove {
   0%, 100% {
-    transform: translateY(0) rotate(0deg);
-    opacity: .35;
+    transform: translateY(0) rotate(0deg) scale(1);
+    opacity: .65;
   }
   50% {
-    transform: translateY(-22px) rotate(25deg);
-    opacity: .85;
+    transform: translateY(-25px) rotate(25deg) scale(1.2);
+    opacity: 1;
   }
 }
 
-@keyframes locksyCircleFloat {
+@keyframes locksyCircleMove {
   from {
-    transform: translate(0, 0) scale(.9);
+    transform: translate(0, 0);
   }
   to {
-    transform: translate(25px, -35px) scale(1.12);
+    transform: translate(35px, -45px);
   }
 }
 
-/* Reduce motion for accessibility */
-
-@media (prefers-reduced-motion: reduce) {
-  body::before,
-  body::after,
-  #root::before,
-  #root::after {
-    animation: none;
-  }
-}
