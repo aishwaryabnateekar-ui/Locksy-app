@@ -1,5 +1,4 @@
-
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import {
   ShieldCheck,
   LockKeyhole,
@@ -7,132 +6,52 @@ import {
   Image,
   Shield,
 } from "lucide-react";
+
+import {
+  signInWithPopup,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+
+import { auth, googleProvider } from "./firebase";
 import "./styles.css";
 
-const API_URL = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
-
-const GOOGLE_CLIENT_ID =
-  "726973550896-o3d01krtb44g5q2tl4m1h2jmveq7p6th.apps.googleusercontent.com";
-
 export default function Auth({ onLogin }) {
-  const googleButtonRef = useRef(null);
-
   const [isRegister, setIsRegister] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [googleReady, setGoogleReady] = useState(false);
 
-  useEffect(() => {
-    let active = true;
+  function finishLogin(firebaseUser) {
+    sessionStorage.setItem("locksyUser", firebaseUser.uid);
 
-    function initializeGoogle() {
-      if (!active || !window.google?.accounts?.id) return;
+    onLogin({
+      id: firebaseUser.uid,
+      uid: firebaseUser.uid,
+      name: firebaseUser.displayName || "LOCKSY User",
+      email: firebaseUser.email,
+      picture: firebaseUser.photoURL || "",
+      photoURL: firebaseUser.photoURL || "",
+    });
+  }
 
-      window.google.accounts.id.initialize({
-        client_id: GOOGLE_CLIENT_ID,
-        callback: async (response) => {
-          await authenticate("google", { idToken: response.credential });
-        },
-        auto_select: false,
-      });
-
-      if (googleButtonRef.current) {
-        googleButtonRef.current.innerHTML = "";
-
-        window.google.accounts.id.renderButton(
-          googleButtonRef.current,
-          {
-            theme: "filled_blue",
-            size: "large",
-            text: "continue_with",
-            shape: "pill",
-            width: 320,
-          }
-        );
-      }
-
-      if (active) setGoogleReady(true);
-    }
-
-    let script = document.querySelector(
-      'script[src="https://accounts.google.com/gsi/client"]'
-    );
-
-    if (window.google?.accounts?.id) {
-      initializeGoogle();
-    } else {
-      if (!script) {
-        script = document.createElement("script");
-        script.src = "https://accounts.google.com/gsi/client";
-        script.async = true;
-        script.defer = true;
-        document.head.appendChild(script);
-      }
-
-      script.addEventListener("load", initializeGoogle);
-
-      script.addEventListener("error", () => {
-        if (active) setError("Google Sign-In could not load. Please refresh.");
-      });
-    }
-
-    return () => {
-      active = false;
-      script?.removeEventListener("load", initializeGoogle);
-    };
-  }, []);
-
-  async function authenticate(method, credentials) {
+  async function handleGoogleLogin() {
     setError("");
-
-    if (!API_URL) {
-      setError(
-        "LOCKSY server URL is not configured. The backend must be deployed before sign-in can work."
-      );
-      return;
-    }
-
     setLoading(true);
 
     try {
-      const endpoint =
-        method === "google"
-          ? "google"
-          : isRegister
-            ? "register"
-            : "login";
-
-      const response = await fetch(
-        `${API_URL}/api/auth/${endpoint}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(credentials),
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Sign-in failed. Please try again.");
-      }
-
-      if (!data.token || !data.user) {
-        throw new Error("The server returned an invalid login response.");
-      }
-
-      sessionStorage.setItem("locksyToken", data.token);
-      onLogin(data.user);
+      const result = await signInWithPopup(auth, googleProvider);
+      finishLogin(result.user);
     } catch (err) {
       setError(
-        err.message === "Failed to fetch"
-          ? "Cannot connect to LOCKSY. Please check the deployed backend."
-          : err.message
+        err.code === "auth/unauthorized-domain"
+          ? "This website is not authorized in Firebase. We need to add its domain."
+          : err.code === "auth/popup-closed-by-user"
+            ? "Google sign-in was cancelled. Please try again."
+            : err.message || "Google sign-in failed."
       );
     } finally {
       setLoading(false);
@@ -141,28 +60,43 @@ export default function Auth({ onLogin }) {
 
   async function handleSubmit(event) {
     event.preventDefault();
+    setError("");
+    setLoading(true);
 
-    if (password.length < 8) {
-      setError("Password must contain at least 8 characters.");
-      return;
+    try {
+      let result;
+
+      if (isRegister) {
+        result = await createUserWithEmailAndPassword(
+          auth,
+          email.trim(),
+          password
+        );
+
+        if (name.trim()) {
+          await updateProfile(result.user, {
+            displayName: name.trim(),
+          });
+        }
+      } else {
+        result = await signInWithEmailAndPassword(
+          auth,
+          email.trim(),
+          password
+        );
+      }
+
+      finishLogin(result.user);
+    } catch (err) {
+      setError(err.message || "Authentication failed.");
+    } finally {
+      setLoading(false);
     }
-
-    if (isRegister && !name.trim()) {
-      setError("Please enter your full name.");
-      return;
-    }
-
-    await authenticate("manual", {
-      ...(isRegister ? { name: name.trim() } : {}),
-      email: email.trim().toLowerCase(),
-      password,
-    });
   }
 
   return (
     <main className="auth-page locksy-auth">
       <section className="auth-card locksy-auth-card">
-
         <div className="locksy-auth-visual">
           <div className="auth-glow auth-glow-one" />
           <div className="auth-glow auth-glow-two" />
@@ -206,7 +140,6 @@ export default function Auth({ onLogin }) {
         </div>
 
         <div className="locksy-auth-form-panel">
-
           <div className="locksy-mobile-brand">
             <ShieldCheck size={30} />
             <strong>LOCKSY</strong>
@@ -227,13 +160,14 @@ export default function Auth({ onLogin }) {
           </div>
 
           <div className="google-signin-section">
-            <div ref={googleButtonRef} />
-
-            {!googleReady && (
-              <p className="google-loading">
-                Loading Google Sign-In...
-              </p>
-            )}
+            <button
+              type="button"
+              className="auth-submit"
+              onClick={handleGoogleLogin}
+              disabled={loading}
+            >
+              {loading ? "Connecting..." : "Continue with Google"}
+            </button>
           </div>
 
           <div className="auth-divider">
@@ -241,7 +175,6 @@ export default function Auth({ onLogin }) {
           </div>
 
           <form onSubmit={handleSubmit} className="locksy-login-form">
-
             {isRegister && (
               <label className="auth-label">
                 Full name
@@ -275,9 +208,7 @@ export default function Auth({ onLogin }) {
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 placeholder="Minimum 8 characters"
-                autoComplete={
-                  isRegister ? "new-password" : "current-password"
-                }
+                autoComplete={isRegister ? "new-password" : "current-password"}
                 minLength={8}
                 required
               />
@@ -302,13 +233,16 @@ export default function Auth({ onLogin }) {
             </button>
           </form>
 
+          {error && (
+            <p className="auth-error" role="alert">
+              {error}
+            </p>
+          )}
+
           <p className="auth-switch">
             {isRegister
               ? "Already have an account?"
-              : "New to LOCKSY?"}
-
-            {" "}
-
+              : "New to LOCKSY?"}{" "}
             <button
               type="button"
               onClick={() => {
