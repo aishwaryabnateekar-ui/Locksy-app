@@ -807,3 +807,109 @@ body::after {
     font-size: 24px;
   }
 }
+
+/* =====================================
+   LOCKSY — FLOATING SPARKLES & CIRCLES
+===================================== */
+
+body::before,
+body::after {
+  content: "✦";
+  position: fixed;
+  z-index: 5;
+  pointer-events: none;
+  font-size: 19px;
+  color: #9875ff;
+  text-shadow: 0 0 10px #a78bfa;
+  animation: locksyFloat 7s ease-in-out infinite;
+}
+
+body::before {
+  top: 18%;
+  right: 9%;
+}
+
+body::after {
+  content: "✧";
+  bottom: 20%;
+  left: 8%;
+  color: #12bbae;
+  animation-delay: 3s;
+}
+
+/* Soft floating circles */
+
+body {
+  background-image:
+    radial-gradient(circle at 12% 35%, #a78bfa18 0, transparent 130px),
+    radial-gradient(circle at 88% 65%, #12bbae18 0, transparent 150px);
+  background-attachment: fixed;
+}
+
+#root {
+  position: relative;
+  isolation: isolate;
+}
+
+#root::before,
+#root::after {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 50%;
+  filter: blur(2px);
+  animation: locksyCircleFloat 13s ease-in-out infinite alternate;
+}
+
+#root::before {
+  width: 115px;
+  height: 115px;
+  top: 16%;
+  left: 3%;
+  background: #9b7aff18;
+  border: 1px solid #9b7aff30;
+}
+
+#root::after {
+  width: 85px;
+  height: 85px;
+  right: 5%;
+  bottom: 12%;
+  background: #12bbae18;
+  border: 1px solid #12bbae35;
+  animation-delay: 3s;
+}
+
+/* Smooth animations */
+
+@keyframes locksyFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: .35;
+  }
+  50% {
+    transform: translateY(-22px) rotate(25deg);
+    opacity: .85;
+  }
+}
+
+@keyframes locksyCircleFloat {
+  from {
+    transform: translate(0, 0) scale(.9);
+  }
+  to {
+    transform: translate(25px, -35px) scale(1.12);
+  }
+}
+
+/* Reduce motion for accessibility */
+
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  body::after,
+  #root::before,
+  #root::after {
+    animation: none;
+  }
+}
