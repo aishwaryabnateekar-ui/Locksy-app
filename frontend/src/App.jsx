@@ -46,8 +46,8 @@ export default function App() {
   const [notice, setNotice] = useState("");
   const fileRef = useRef(null);
 
-  const name = user?.name || user?.displayName || "Aishwarya✨🎀";
-  const email = user?.email || "";
+ const name = "Aishwarya✨🎀";
+const email = user?.email || "";
 
   function login(loggedInUser) {
     setUser(loggedInUser);
