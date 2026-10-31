@@ -562,3 +562,23 @@ function DocumentRow({ doc, onDelete }) {
     </div>
   );
 }
+// LOCKSY Section PIN helpers
+function getSectionPins() {
+  try {
+    return JSON.parse(localStorage.getItem("locksySectionPins") || "{}");
+  } catch {
+    return {};
+  }
+}
+
+function saveSectionPin(section, pin) {
+  if (!/^\d{4,6}$/.test(pin)) {
+    alert("PIN must contain 4 to 6 digits.");
+    return;
+  }
+
+  const pins = getSectionPins();
+  pins[section] = pin;
+  localStorage.setItem("locksySectionPins", JSON.stringify(pins));
+  alert(`${section} PIN saved successfully.`);
+}
