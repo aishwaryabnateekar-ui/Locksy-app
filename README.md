@@ -1,77 +1,63 @@
-# Locksy-app
-Privacy-first Digital Vault
-
 # 🔐 LOCKSY – Privacy-First Digital Vault
 
 <p align="center">
   <b>Share Smart. Share Safe.</b>
 </p>
 
-LOCKSY is a privacy-first digital vault designed to securely store, organize, manage, and share important personal documents and memorable photographs in one place.
+<p align="center">
+  <a href="https://aishwaryabnateekar-ui.github.io/Locksy-app/">
+    <b>🚀 Open LOCKSY – Live Website</b>
+  </a>
+</p>
 
-Our goal is to provide a secure digital space where students, working professionals, adults, and businesses remain in control of their digital lives.
+## 🖥️ Live Project Preview
+
+![LOCKSY Dashboard Preview](./docs/locksy-preview.png)
+
+*LOCKSY – Your personal digital vault for documents and memories.*
 
 ---
 
 ## 🌟 Project Overview
 
-LOCKSY goes beyond traditional cloud storage by combining document management, personal memory preservation, file encryption, privacy protection, and controlled sharing.
+LOCKSY is a privacy-first digital vault designed to store, organize, manage, and share important personal documents and memorable photographs in one place.
 
-Users can securely store documents such as:
-
-- Aadhaar Cards
-- PAN Cards
-- Passports
-- Educational Certificates
-- Bank Statements
-- Insurance Documents
-- Employment Records
-- Medical Documents
-- Personal Photographs
+Our goal is to provide a convenient digital space where students, working professionals, adults, and businesses can manage their digital lives.
 
 ## ✨ Key Features
 
 ### 🔐 Secure Authentication
 - User registration and login.
-- Protected user accounts.
-- Secure password hashing.
-- Session management.
+- Google authentication.
+- Firebase Authentication.
 
 ### 📁 Private Document Vault
-- Upload and download documents.
+- Upload and manage documents.
 - Organize files into categories.
-- Rename and manage documents.
-- Individual file protection.
-- Secure document storage.
+- View and download documents.
+- Individual section PIN interface.
 
 ### 🖼️ Memories & Albums
 - Store personal photographs.
-- Create custom photo albums.
 - Organize memorable moments.
-- Private photo gallery.
+- Private photo gallery concept.
 
-### 🛡️ Advanced Security
-- AES-256-GCM file encryption.
-- Individual file locks.
-- Protected document access.
-- Security monitoring.
+### 🛡️ Security Features
+- Authentication-based access.
+- Section-level PIN interface.
+- Privacy-focused design.
+- Security and access monitoring planned.
 
 ### 📤 Secure File Sharing
-- Password-protected sharing.
-- OTP verification.
-- Expiring sharing links.
-- Link revocation controls.
+- Controlled sharing concept.
+- Expiring sharing links planned.
+- Link revocation planned.
 
-### 📄 PDF Redaction
-- Identify sensitive information.
-- Permanently remove confidential content.
-- Create safer documents for sharing.
-
-### 📊 Security Dashboard
-- Monitor stored documents.
-- Review sharing activity.
-- Manage active access.
-- View activity history.
+### 📊 Dashboard
+- Document category cards.
+- Recent documents.
+- Search interface.
+- Activity and settings sections.
 
 ---
 
@@ -80,27 +66,27 @@ Users can securely store documents such as:
 | Technology | Purpose |
 |---|---|
 | React.js | Frontend development |
-| HTML5 | Web structure |
-| CSS3 | User interface design |
 | JavaScript | Application logic |
-| Node.js | Backend development |
-| Express.js | API development |
-| MongoDB | Database |
-| AES-256-GCM | File encryption |
-| JWT | Authentication |
+| HTML5 | Web structure |
+| CSS3 | Interface design |
+| Firebase Authentication | User authentication |
+| Firebase Firestore | Database |
+| Firebase Storage | File storage |
+| GitHub | Version control |
+| GitHub Pages | Deployment |
 
 ---
 
 ## 🎨 User Interface
 
-LOCKSY features a modern and responsive interface with:
+LOCKSY features a modern, responsive interface with:
 
-- Purple and blue color theme.
-- Clean dashboard.
-- Easy navigation.
+- Purple and teal color theme.
+- Modern dashboard design.
 - Document category cards.
-- Modern file management.
-- Responsive design.
+- Clean navigation.
+- Responsive layout.
+- Simple document management.
 
 ---
 
@@ -120,20 +106,21 @@ LOCKSY features a modern and responsive interface with:
 ## 🎯 Project Objectives
 
 - Protect sensitive personal information.
-- Provide secure document storage.
 - Simplify document organization.
+- Provide a centralized document vault.
 - Preserve personal memories.
 - Enable controlled file sharing.
-- Improve digital privacy and security.
+- Improve digital privacy.
 
 ---
 
 ## 🚀 Future Enhancements
 
-- Cloud backup and recovery.
-- Biometric authentication.
-- AI-powered document classification.
+- Client-side AES-256-GCM file encryption.
+- Secure cloud backup and recovery.
+- Biometric authentication using supported device capabilities.
 - OCR-based text extraction.
+- AI-powered document classification.
 - Advanced access control.
 - Mobile application.
 - Multi-factor authentication.
@@ -142,24 +129,22 @@ LOCKSY features a modern and responsive interface with:
 
 ## 🔒 Security & Privacy
 
-LOCKSY is designed around privacy and security.
+LOCKSY is being developed with privacy and security as core priorities.
 
-Files should be encrypted before storage, and access should be restricted to authorized users.
+Production-ready security requires verified encryption, secure key management, restrictive database and storage rules, access controls, HTTPS, and encrypted backups.
 
-Security-sensitive credentials and encryption keys must never be committed to the public repository.
-
-**Note:** Production deployment requires security testing, secure key management, HTTPS, access controls, and reliable encrypted backups.
+**Note:** Features marked as planned or future enhancements are not yet fully implemented. The project is currently under development.
 
 ---
 
-## 👨‍💻 Project Status
+## 🚀 Project Status
 
-🚧 Under Development
+🚧 **Under Development**
 
-LOCKSY is being developed as a secure digital document and personal memory management platform.
+LOCKSY is being developed as a digital document and personal memory management platform.
 
 ---
 
 <p align="center">
-  <b>LOCKSY – Your Privacy. Your Documents. Your Control.</b>
+  <b>LOCKSY – Your Privacy. Your Documents. Your Control. 💜</b>
 </p>
