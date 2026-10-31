@@ -4,479 +4,462 @@ import Auth from "./Auth";
 import { auth } from "./firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import {
-  ShieldCheck, Home, FileText, Folder, FolderPlus, Share2,
-  Clock, Settings, Search, Bell, Plus, GraduationCap,
-  Landmark, IdCard, HeartPulse, Image as ImageIcon,
-  BriefcaseBusiness, ChevronRight, MoreVertical, Upload,
-  X, Menu, Download, Trash2, LockKeyhole, Activity,
-  Files, Eye, UserCircle, CreditCard, Wallet, Plane,
-  FileBadge, BookOpen, LogOut, CalendarDays, FolderOpen
+  ShieldCheck, Home, Files, Folder, Share2, Clock, Settings,
+  Search, Bell, Plus, GraduationCap, Landmark, IdCard,
+  HeartPulse, Image as ImageIcon, BriefcaseBusiness, Upload,
+  X, Menu, Download, Trash2, LockKeyhole, Activity, Eye,
+  UserCircle, FileText, FolderPlus, LogOut, Plane, Scale,
+  Stethoscope, Sparkles, Shield, ChevronRight, FileBadge,
+  Wallet, MoreHorizontal, CalendarDays
 } from "lucide-react";
 
 const categories = [
-  { name: "Certificates", icon: FileBadge, color: "#8B5CF6", bg: "#F1EBFF" },
-  { name: "Mark Sheets", icon: GraduationCap, color: "#0D9488", bg: "#E5F7F4" },
-  { name: "Property", icon: Landmark, color: "#D97706", bg: "#FFF3E5" },
-  { name: "Bank Accounts", icon: Wallet, color: "#4779CE", bg: "#EAF1FF" },
-  { name: "Identity", icon: IdCard, color: "#DB5284", bg: "#FCEBF2" },
-  { name: "Insurance", icon: HeartPulse, color: "#169B75", bg: "#E6F7EF" },
-  { name: "Personal", icon: UserCircle, color: "#8B5CF6", bg: "#F1EBFF" },
-  { name: "Private Photos", icon: ImageIcon, color: "#C17B32", bg: "#FFF4E8" },
+  { name: "Personal", icon: UserCircle, color: "#D6B8FF", bg: "#7044D8" },
+  { name: "Certificates", icon: FileBadge, color: "#C8B5FF", bg: "#5436B5" },
+  { name: "Mark Sheets", icon: GraduationCap, color: "#82E9DF", bg: "#087E88" },
+  { name: "Bank Accounts", icon: Wallet, color: "#91C9FF", bg: "#285FAE" },
+  { name: "Property", icon: Landmark, color: "#FFD18B", bg: "#A45D23" },
+  { name: "Identity", icon: IdCard, color: "#FF9FC6", bg: "#A53E78" },
+  { name: "Insurance", icon: HeartPulse, color: "#8BE8C1", bg: "#167B69" },
+  { name: "Private Photos", icon: ImageIcon, color: "#FFC18B", bg: "#A45A28" },
 ];
 
-const sampleDocuments = [
-  { id: "demo-1", name: "Birth Certificate.pdf", category: "Personal", date: "Oct 28, 2026", type: "application/pdf", demo: true },
-  { id: "demo-2", name: "Passport.pdf", category: "Personal", date: "Oct 26, 2026", type: "application/pdf", demo: true },
-  { id: "demo-3", name: "Aadhaar Card.pdf", category: "Personal", date: "Oct 24, 2026", type: "application/pdf", demo: true },
-  { id: "demo-4", name: "Personal Photo.jpg", category: "Personal", date: "Oct 22, 2026", type: "image/jpeg", demo: true },
-  { id: "demo-5", name: "Degree Certificate.pdf", category: "Certificates", date: "Oct 20, 2026", type: "application/pdf", demo: true },
-  { id: "demo-6", name: "Semester 5 Marks.pdf", category: "Mark Sheets", date: "Oct 18, 2026", type: "application/pdf", demo: true },
-  { id: "demo-7", name: "Property Agreement.pdf", category: "Property", date: "Oct 15, 2026", type: "application/pdf", demo: true },
-  { id: "demo-8", name: "Bank Statement.pdf", category: "Bank Accounts", date: "Oct 12, 2026", type: "application/pdf", demo: true },
+const demoDocuments = [
+  { id: "sample-1", name: "Birth Certificate.pdf", category: "Personal", date: "31 Oct 2026", type: "application/pdf", demo: true },
+  { id: "sample-2", name: "Passport.pdf", category: "Personal", date: "29 Oct 2026", type: "application/pdf", demo: true },
+  { id: "sample-3", name: "Aadhaar Card.pdf", category: "Personal", date: "27 Oct 2026", type: "application/pdf", demo: true },
+  { id: "sample-4", name: "Personal Photo.jpg", category: "Personal", date: "25 Oct 2026", type: "image/jpeg", demo: true },
+  { id: "sample-5", name: "Degree Certificate.pdf", category: "Certificates", date: "24 Oct 2026", type: "application/pdf", demo: true },
+  { id: "sample-6", name: "Semester Marks.pdf", category: "Mark Sheets", date: "22 Oct 2026", type: "application/pdf", demo: true },
+  { id: "sample-7", name: "Bank Statement.pdf", category: "Bank Accounts", date: "20 Oct 2026", type: "application/pdf", demo: true },
 ];
 
-const styles = `
-* { box-sizing: border-box; }
+const css = `
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
-* {
-  box-sizing: border-box;
+* { box-sizing: border-box; }
+.locksy {
+  min-height: 100vh;
+  color: #fff;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background:
+    radial-gradient(ellipse at 80% 15%, #087D94 0%, transparent 40%),
+    radial-gradient(ellipse at 10% 90%, #5134A5 0%, transparent 40%),
+    linear-gradient(135deg,#160C55,#25217A 48%,#087E86);
 }
-
-.locksy-app {
-  font-family: 'Plus Jakarta Sans', sans-serif !important;
-  font-weight: 400;
-  letter-spacing: -0.2px;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
+.locksy button, .locksy input { font: inherit; }
+.locksy button { cursor: pointer; }
+.locksy-layout { display: grid; grid-template-columns: 205px minmax(380px,1fr) 280px; gap: 13px; min-height: 100vh; padding: 13px; }
+.locksy-sidebar, .locksy-panel {
+  background: #FFFFFF12;
+  border: 1px solid #FFFFFF25;
+  border-radius: 18px;
+  backdrop-filter: blur(18px);
 }
-
-.locksy-welcome h1 {
-  font-size: 29px;
-  font-weight: 800;
-  letter-spacing: -1.2px;
-  line-height: 1.3;
-}
-
-.locksy-section-heading h2 {
-  font-size: 19px;
-  font-weight: 800;
-  letter-spacing: -0.6px;
-}
-
-.locksy-category-card strong {
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: -0.3px;
-}
-
-.locksy-category-card small {
-  font-size: 11px;
-  font-weight: 500;
-  color: #9690A5;
-}
-
-.locksy-doc-info strong {
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: -0.2px;
-}
-
-.locksy-nav button {
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.locksy-page-title h1 {
-  font-size: 25px;
-  font-weight: 800;
-  letter-spacing: -0.8px;
-}
-.locksy-app { min-height: 100vh; background: #F8F8FC; color: #25223A; font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif; }
-.locksy-layout { display: flex; min-height: 100vh; }
-.locksy-sidebar { width: 250px; flex-shrink: 0; background: white; border-right: 1px solid #EEEAF5; padding: 25px 17px 18px; display: flex; flex-direction: column; }
-.locksy-logo { display: flex; align-items: center; gap: 10px; padding: 0 10px 30px; }
-.locksy-logo-mark { width: 40px; height: 40px; border-radius: 13px; display: grid; place-items: center; color: white; background: linear-gradient(135deg,#8B5CF6,#5B43C7); }
-.locksy-logo strong { font-size: 21px; letter-spacing: 1.5px; color: #30264F; }
-.locksy-logo small { display: block; color: #9892A9; font-size: 10px; margin-top: 2px; letter-spacing: .5px; }
-.locksy-nav-label { color: #A19BAF; font-size: 10px; font-weight: 800; letter-spacing: 1.3px; padding: 0 12px; margin: 13px 0 9px; }
-.locksy-nav { display: flex; flex-direction: column; gap: 5px; }
-.locksy-nav button { border: 0; background: transparent; color: #777186; width: 100%; display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: 11px; font-size: 13px; font-weight: 600; cursor: pointer; text-align: left; }
-.locksy-nav button:hover { background: #F7F3FF; color: #7552CE; }
-.locksy-nav button.active { color: #7650D1; background: #F1EBFF; }
+.locksy-sidebar { padding: 20px 13px; display: flex; flex-direction: column; }
+.locksy-brand { display: flex; gap: 10px; align-items: center; padding: 3px 8px 25px; }
+.locksy-brand-icon { width: 43px; height: 43px; display: grid; place-items: center; border-radius: 14px; color: #fff; background: linear-gradient(140deg,#8E69FF,#087DAD); box-shadow: 0 5px 22px #07032B55; }
+.locksy-brand strong { font-size: 19px; letter-spacing: 1.5px; }
+.locksy-brand small { display: block; font-size: 9px; color: #D5D3FF; margin-top: 3px; }
+.locksy-nav-title { color: #B8B3E8; font-size: 9px; letter-spacing: 1.5px; font-weight: 800; padding: 13px 10px 8px; }
+.locksy-nav { display: grid; gap: 5px; }
+.locksy-nav button { border: 0; background: transparent; color: #E7E5FF; padding: 11px 10px; display: flex; gap: 11px; align-items: center; text-align: left; border-radius: 11px; font-size: 11px; font-weight: 600; }
+.locksy-nav button:hover, .locksy-nav button.active { background: linear-gradient(100deg,#8C5AFF,#4A70D6); color: white; box-shadow: 0 5px 17px #110A4B55; }
 .locksy-nav button span { flex: 1; }
-.locksy-sidebar-bottom { margin-top: auto; border-top: 1px solid #F0EDF4; padding-top: 16px; }
-.locksy-profile { display: flex; align-items: center; gap: 10px; padding: 12px 8px 3px; }
-.locksy-avatar { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: #EFE8FF; color: #7650D1; font-weight: 800; overflow: hidden; }
+.locksy-side-bottom { margin-top: auto; border-top: 1px solid #FFFFFF25; padding-top: 13px; }
+.locksy-profile { display: flex; align-items: center; gap: 8px; padding: 12px 4px 0; min-width: 0; }
+.locksy-avatar { width: 34px; height: 34px; flex-shrink: 0; border-radius: 50%; background: #D7C5FF; color: #392080; display: grid; place-items: center; overflow: hidden; font-weight: 800; font-size: 12px; }
 .locksy-avatar img { width: 100%; height: 100%; object-fit: cover; }
-.locksy-profile-info { min-width: 0; flex: 1; }
-.locksy-profile-info strong { display: block; font-size: 12px; }
-.locksy-profile-info small { display: block; font-size: 10px; color: #9992A7; margin-top: 3px; overflow: hidden; text-overflow: ellipsis; }
-.locksy-main { flex: 1; min-width: 0; padding: 26px 34px 50px; max-width: 1600px; margin: 0 auto; width: 100%; }
-.locksy-topbar { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 28px; }
-.locksy-search { display: flex; align-items: center; gap: 10px; background: white; border: 1px solid #EEEAF3; border-radius: 12px; padding: 11px 14px; width: min(340px, 48%); color: #9992A7; }
-.locksy-search input { border: 0; outline: 0; width: 100%; font-size: 13px; color: #302A42; background: transparent; }
-.locksy-top-actions { display: flex; align-items: center; gap: 10px; }
-.locksy-icon-btn { border: 1px solid #EEEAF3; background: white; width: 39px; height: 39px; border-radius: 11px; display: grid; place-items: center; color: #716A82; cursor: pointer; }
-.locksy-welcome { display: flex; justify-content: space-between; align-items: center; gap: 20px; background: linear-gradient(110deg,#F1EBFF,#EAF8F6); border: 1px solid #EAE4F8; padding: 25px 28px; border-radius: 19px; margin-bottom: 27px; }
-.locksy-welcome h1 { font-size: clamp(22px,3vw,29px); letter-spacing: -.8px; margin: 0 0 8px; color: #30264F; }
-.locksy-welcome p { color: #777186; font-size: 13px; margin: 0; }
-.locksy-welcome-icon { width: 65px; height: 65px; border-radius: 20px; background: white; display: grid; place-items: center; color: #8058D7; box-shadow: 0 6px 20px #7F5AC51A; flex-shrink: 0; }
-.locksy-section-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 25px 0 15px; }
-.locksy-section-heading h2 { margin: 0; font-size: 17px; color: #302A42; letter-spacing: -.3px; }
-.locksy-section-heading p { margin: 4px 0 0; color: #9992A7; font-size: 11px; }
-.locksy-link { border: 0; background: transparent; color: #8058D7; font-size: 12px; font-weight: 700; cursor: pointer; }
-.locksy-category-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 13px; }
-.locksy-category-card { background: white; border: 1px solid #F0EDF5; border-radius: 15px; padding: 16px; text-align: left; cursor: pointer; transition: .18s ease; min-width: 0; }
-.locksy-category-card:hover { transform: translateY(-3px); box-shadow: 0 9px 22px #44315B0C; border-color: #DCD0F6; }
-.locksy-category-icon { width: 39px; height: 39px; border-radius: 12px; display: grid; place-items: center; margin-bottom: 13px; }
-.locksy-category-card strong { display: block; color: #39334A; font-size: 12px; font-weight: 700; }
-.locksy-category-card small { display: block; margin-top: 5px; color: #A09AAA; font-size: 10px; }
-.locksy-recent-list { background: white; border: 1px solid #F0EDF5; border-radius: 15px; overflow: hidden; }
-.locksy-doc-row { display: flex; align-items: center; gap: 12px; padding: 13px 16px; border-bottom: 1px solid #F3F0F6; }
-.locksy-doc-row:last-child { border-bottom: 0; }
-.locksy-file-icon { width: 37px; height: 37px; border-radius: 11px; background: #F2EDFF; color: #8058D7; display: grid; place-items: center; flex-shrink: 0; }
-.locksy-doc-info { min-width: 0; flex: 1; }
-.locksy-doc-info strong { display: block; font-size: 12px; color: #39334A; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.locksy-doc-info small { display: block; color: #A09AAA; font-size: 10px; margin-top: 4px; }
-.locksy-doc-actions { display: flex; gap: 5px; align-items: center; }
-.locksy-doc-actions button,.locksy-doc-actions a { border: 0; background: transparent; color: #898197; cursor: pointer; padding: 7px; display: grid; place-items: center; text-decoration: none; }
-.locksy-doc-actions button:hover,.locksy-doc-actions a:hover { color: #8058D7; }
-.locksy-primary { border: 0; border-radius: 10px; background: linear-gradient(135deg,#8B5CF6,#6946C6); color: white; padding: 11px 15px; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
-.locksy-secondary { border: 1px solid #EAE5F1; background: white; color: #635B73; padding: 10px 14px; border-radius: 10px; font-size: 12px; cursor: pointer; }
-.locksy-page-title { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 22px; }
-.locksy-page-title h1 { margin: 0; font-size: 23px; letter-spacing: -.5px; }
-.locksy-page-title p { color: #9992A7; font-size: 12px; margin: 6px 0 0; }
-.locksy-empty { text-align: center; background: white; border: 1px dashed #DDD5EA; border-radius: 16px; padding: 42px 15px; color: #91899E; }
-.locksy-empty h3 { color: #39334A; font-size: 15px; margin: 12px 0 5px; }
-.locksy-empty p { font-size: 12px; margin: 0; }
-.locksy-modal-backdrop { position: fixed; inset: 0; z-index: 100; background: #211A3280; display: grid; place-items: center; padding: 18px; }
-.locksy-modal { background: white; width: min(420px,100%); border-radius: 17px; padding: 23px; box-shadow: 0 20px 70px #211A3240; }
-.locksy-modal-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
-.locksy-modal h2 { font-size: 18px; margin: 0; color: #30264F; }
-.locksy-modal p { color: #898197; font-size: 12px; line-height: 1.6; }
-.locksy-modal input { width: 100%; border: 1px solid #E7E1EF; border-radius: 10px; padding: 12px; outline: 0; margin: 8px 0; font: inherit; font-size: 13px; }
-.locksy-modal input:focus { border-color: #8B5CF6; }
-.locksy-modal-actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 14px; }
-.locksy-notice { position: fixed; bottom: 22px; right: 22px; z-index: 120; background: #30264F; color: white; padding: 12px 17px; border-radius: 11px; font-size: 12px; box-shadow: 0 8px 25px #30264F30; }
+.locksy-profile-info { flex: 1; min-width: 0; }
+.locksy-profile-info strong { display: block; font-size: 10px; white-space: nowrap; }
+.locksy-profile-info small { display: block; font-size: 8px; color: #D1D1EF; overflow: hidden; text-overflow: ellipsis; }
+.locksy-logout { border: 0; color: white; background: #FFFFFF18; border-radius: 8px; padding: 7px; }
+.locksy-main { min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+.locksy-topbar { display: flex; align-items: center; gap: 9px; }
+.locksy-search { flex: 1; display: flex; align-items: center; gap: 9px; border: 1px solid #FFFFFF30; background: #FFFFFF16; border-radius: 11px; padding: 10px 12px; color: #E5E2FF; }
+.locksy-search input { width: 100%; min-width: 0; background: transparent; border: 0; outline: 0; color: white; font-size: 11px; }
+.locksy-search input::placeholder { color: #D2D0EF; }
+.locksy-icon-button { width: 36px; height: 36px; display: grid; place-items: center; border: 1px solid #FFFFFF25; background: #FFFFFF17; color: white; border-radius: 10px; }
+.locksy-welcome { padding: 17px 19px; border-radius: 15px; border: 1px solid #FFFFFF30; background: linear-gradient(110deg,#FFFFFF23,#FFFFFF0D); display: flex; align-items: center; justify-content: space-between; }
+.locksy-welcome h1 { margin: 0; font-size: 21px; font-weight: 800; letter-spacing: -.8px; }
+.locksy-welcome p { color: #DCD9FF; font-size: 10px; margin: 5px 0 0; }
+.locksy-welcome-icon { color: #8CEBE0; }
+.locksy-section-head { display: flex; justify-content: space-between; align-items: center; margin: 3px 0 9px; }
+.locksy-section-head h2 { margin: 0; font-size: 13px; font-weight: 800; }
+.locksy-section-head p { margin: 3px 0 0; color: #D1CFF0; font-size: 9px; }
+.locksy-text-button { border: 0; background: transparent; color: #B8F5E9; font-size: 9px; font-weight: 700; }
+.locksy-category-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 8px; }
+.locksy-category { border: 1px solid #FFFFFF25; border-radius: 12px; padding: 10px 7px; color: white; text-align: center; background: #FFFFFF15; transition: .2s; min-width: 0; }
+.locksy-category:hover { transform: translateY(-2px); background: #FFFFFF25; }
+.locksy-category-icon { width: 31px; height: 31px; border-radius: 10px; display: grid; place-items: center; margin: 0 auto 7px; }
+.locksy-category strong { display: block; font-size: 9px; font-weight: 700; overflow-wrap: anywhere; }
+.locksy-category small { display: block; color: #D3D1F1; font-size: 8px; margin-top: 3px; }
+.locksy-glass-card { border: 1px solid #FFFFFF25; background: #FFFFFF14; border-radius: 14px; padding: 12px; min-width: 0; }
+.locksy-bottom-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.locksy-share-icon { width: 36px; height: 36px; border-radius: 50%; background: #FFFFFF20; color: #75F0D6; display: grid; place-items: center; margin: 8px auto; }
+.locksy-share-card { text-align: center; }
+.locksy-share-card h3 { font-size: 10px; margin: 5px 0; }
+.locksy-share-card p { font-size: 8px; color: #D3D1F1; margin: 0 0 9px; }
+.locksy-mini-button { border: 1px solid #FFFFFF35; background: #FFFFFF16; color: white; padding: 7px 9px; border-radius: 8px; font-size: 8px; font-weight: 700; }
+.locksy-memory-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 5px; margin-top: 9px; }
+.locksy-memory { height: 47px; border-radius: 7px; display: grid; place-items: center; font-size: 20px; background: linear-gradient(140deg,#F7BC78,#8756A7); }
+.locksy-memory:nth-child(2) { background: linear-gradient(140deg,#B5D7F4,#477C9B); }
+.locksy-memory:nth-child(3) { background: linear-gradient(140deg,#F3C9A1,#A85C71); }
+.locksy-memory:nth-child(4) { background: linear-gradient(140deg,#D2C1FF,#6456AA); }
+.locksy-memory:nth-child(5) { background: linear-gradient(140deg,#9FE5D1,#397E8D); }
+.locksy-memory:nth-child(6) { background: linear-gradient(140deg,#F4D18C,#A66B45); }
+.locksy-right { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.locksy-right .locksy-glass-card { background: #FFFFFF17; }
+.locksy-right-title { font-size: 11px; font-weight: 800; margin: 0 0 10px; display: flex; align-items: center; justify-content: space-between; }
+.locksy-doc-list { display: grid; gap: 7px; }
+.locksy-doc { display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #FFFFFF19; padding-bottom: 7px; min-width: 0; }
+.locksy-doc:last-child { border-bottom: 0; padding-bottom: 0; }
+.locksy-doc-icon { width: 28px; height: 31px; display: grid; place-items: center; border-radius: 7px; background: #FFFFFF20; color: #B7F2E9; flex-shrink: 0; }
+.locksy-doc-info { flex: 1; min-width: 0; }
+.locksy-doc-info strong { display: block; font-size: 8px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.locksy-doc-info small { display: block; font-size: 7px; color: #D4D2EF; margin-top: 3px; }
+.locksy-doc-actions { display: flex; gap: 3px; }
+.locksy-doc-actions button, .locksy-doc-actions a { color: white; border: 0; background: transparent; padding: 4px; display: grid; place-items: center; }
+.locksy-activity-item { display: flex; gap: 8px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid #FFFFFF18; }
+.locksy-activity-item:last-child { border: 0; }
+.locksy-activity-dot { width: 23px; height: 23px; flex-shrink: 0; border-radius: 50%; display: grid; place-items: center; background: #FFFFFF20; color: #7BF0D8; }
+.locksy-activity-item strong { display: block; font-size: 8px; }
+.locksy-activity-item small { display: block; color: #D1CFEB; font-size: 7px; margin-top: 3px; }
+.locksy-page { padding: 15px; border: 1px solid #FFFFFF25; background: #FFFFFF12; border-radius: 14px; }
+.locksy-page h1 { font-size: 20px; margin: 0 0 6px; }
+.locksy-page p { color: #D5D2F0; font-size: 10px; }
+.locksy-page-actions { display: flex; gap: 7px; flex-wrap: wrap; margin: 13px 0; }
+.locksy-primary { border: 0; border-radius: 8px; padding: 9px 12px; background: linear-gradient(100deg,#9B68FF,#536DE0); color: white; font-size: 10px; font-weight: 700; display: inline-flex; gap: 6px; align-items: center; }
+.locksy-secondary { border: 1px solid #FFFFFF40; border-radius: 8px; padding: 9px 12px; background: #FFFFFF15; color: white; font-size: 10px; display: inline-flex; gap: 6px; align-items: center; }
+.locksy-empty { text-align: center; color: #D5D2F0; padding: 28px 10px; font-size: 10px; }
+.locksy-empty h3 { color: white; font-size: 13px; }
+.locksy-modal-bg { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 16px; background: #100A38B8; }
+.locksy-modal { width: min(390px,100%); background: #21195F; color: white; border: 1px solid #FFFFFF40; border-radius: 16px; padding: 20px; box-shadow: 0 20px 70px #0006; }
+.locksy-modal-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.locksy-modal h2 { font-size: 16px; margin: 0; }
+.locksy-modal p { font-size: 10px; color: #D8D4F2; line-height: 1.6; }
+.locksy-modal input { width: 100%; background: #FFFFFF15; color: white; border: 1px solid #FFFFFF40; border-radius: 8px; padding: 11px; outline: 0; font-size: 11px; margin: 7px 0; }
+.locksy-modal input::placeholder { color: #C6C1E6; }
+.locksy-modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 13px; }
+.locksy-notice { position: fixed; z-index: 150; bottom: 18px; right: 18px; background: #17104D; color: white; border: 1px solid #FFFFFF40; border-radius: 10px; padding: 11px 15px; font-size: 10px; box-shadow: 0 8px 30px #0005; }
 .locksy-mobile-menu { display: none; }
-.locksy-demo-note { color: #A29BAC; font-size: 10px; margin-top: 12px; }
-@media(max-width:1050px) { .locksy-category-grid { grid-template-columns: repeat(3,minmax(0,1fr)); } .locksy-main { padding: 22px; } }
-@media(max-width:760px) { .locksy-sidebar { display: none; } .locksy-sidebar.mobile-open { display: flex; position: fixed; z-index: 80; inset: 0 auto 0 0; box-shadow: 15px 0 40px #241A3020; } .locksy-mobile-menu { display: grid; } .locksy-main { padding: 16px; } .locksy-category-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 9px; } .locksy-category-card { padding: 13px; } .locksy-welcome { padding: 20px; } .locksy-welcome-icon { display: none; } .locksy-topbar { margin-bottom: 18px; } .locksy-search { width: 100%; } .locksy-page-title { align-items: flex-start; flex-direction: column; } }
+.locksy-demo-label { color: #D6D2F0; font-size: 8px; margin-top: 7px; }
+@media(max-width:1050px) {
+  .locksy-layout { grid-template-columns: 185px minmax(0,1fr); }
+  .locksy-right { grid-column: 2; display: grid; grid-template-columns: 1fr 1fr; }
+}
+@media(max-width:700px) {
+  .locksy-layout { display: block; padding: 9px; }
+  .locksy-sidebar { display: none; }
+  .locksy-sidebar.mobile-open { display: flex; position: fixed; z-index: 80; top: 9px; bottom: 9px; left: 9px; width: 235px; box-shadow: 0 10px 40px #0008; }
+  .locksy-mobile-menu { display: grid; flex-shrink: 0; }
+  .locksy-main { gap: 10px; }
+  .locksy-category-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .locksy-right { display: grid; grid-template-columns: 1fr; margin-top: 12px; }
+  .locksy-welcome h1 { font-size: 17px; }
+  .locksy-bottom-grid { grid-template-columns: 1fr; }
+}
 `;
 
 export default function App() {
   const [user, setUser] = useState(null);
   const [authReady, setAuthReady] = useState(false);
-  const [documents, setDocuments] = useState(sampleDocuments);
+  const [documents, setDocuments] = useState(demoDocuments);
   const [folders, setFolders] = useState([]);
-  const [activePage, setActivePage] = useState("Dashboard");
+  const [activePage, setActivePage] = useState("Home");
   const [activeCategory, setActiveCategory] = useState("Personal");
   const [search, setSearch] = useState("");
   const [pinSection, setPinSection] = useState(null);
-  const [unlockedSections, setUnlockedSections] = useState([]);
+  const [unlocked, setUnlocked] = useState([]);
   const [notice, setNotice] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [previewDoc, setPreviewDoc] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
   const fileRef = useRef(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      if (firebaseUser) {
-        setUser({
-          id: firebaseUser.uid,
-          uid: firebaseUser.uid,
-          name: firebaseUser.displayName || "LOCKSY User",
-          email: firebaseUser.email || "",
-          picture: firebaseUser.photoURL || "",
-          photoURL: firebaseUser.photoURL || "",
-        });
-      } else {
-        setUser(null);
-      }
+      setUser(firebaseUser ? {
+        uid: firebaseUser.uid,
+        name: firebaseUser.displayName || "LOCKSY User",
+        email: firebaseUser.email || "",
+        photoURL: firebaseUser.photoURL || ""
+      } : null);
       setAuthReady(true);
     });
     return unsubscribe;
   }, []);
-
-  function login(nextUser) {
-    setUser(nextUser);
-  }
-
-  async function logout() {
-    try {
-      await signOut(auth);
-      setUser(null);
-      setActivePage("Dashboard");
-      setUnlockedSections([]);
-    } catch (error) {
-      notify("Could not sign out. Please try again.");
-    }
-  }
 
   function notify(message) {
     setNotice(message);
     window.setTimeout(() => setNotice(""), 2800);
   }
 
-  function openCategory(category) {
-    setActiveCategory(category);
-    setActivePage("My Documents");
-    setMobileOpen(false);
-    if (!unlockedSections.includes(category)) {
-      setPinSection(category);
+  async function logout() {
+    try {
+      await signOut(auth);
+    } catch {
+      notify("Unable to sign out. Please try again.");
     }
   }
 
-  const filteredDocuments = useMemo(() => {
-    return documents.filter((doc) => {
-      const categoryMatch = activePage !== "My Documents" || doc.category === activeCategory;
-      const searchMatch = `${doc.name} ${doc.category}`.toLowerCase().includes(search.toLowerCase());
-      return categoryMatch && searchMatch;
-    });
-  }, [documents, activePage, activeCategory, search]);
-
-  const recentDocuments = [...documents]
-    .sort((a, b) => (b.date || "").localeCompare(a.date || ""))
-    .slice(0, 5);
+  function openCategory(name) {
+    setActiveCategory(name);
+    setActivePage("My Documents");
+    setMobileOpen(false);
+    if (!unlocked.includes(name)) setPinSection(name);
+  }
 
   function addFiles(event) {
-    const files = Array.from(event.target.files || []);
-    if (!files.length) return;
-
-    const newDocs = files.map((file) => ({
+    const selected = Array.from(event.target.files || []);
+    if (!selected.length) return;
+    const added = selected.map((file) => ({
       id: `${Date.now()}-${Math.random()}`,
       name: file.name,
       category: activeCategory,
-      date: new Date().toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }),
+      date: new Date().toLocaleDateString("en-IN"),
       type: file.type,
       url: URL.createObjectURL(file),
-      demo: false,
+      demo: false
     }));
-
-    setDocuments((old) => [...newDocs, ...old]);
-    notify(`${files.length} document(s) added to this session`);
+    setDocuments((old) => [...added, ...old]);
+    notify(`${added.length} file(s) added for this session`);
     event.target.value = "";
   }
 
-  function deleteDocument(id) {
+  function removeDocument(id) {
     const doc = documents.find((item) => item.id === id);
     if (doc?.url) URL.revokeObjectURL(doc.url);
     setDocuments((old) => old.filter((item) => item.id !== id));
-    notify("Document removed from this view");
+    if (previewDoc?.id === id) setPreviewDoc(null);
+    notify("Document removed");
   }
 
   function createFolder() {
-    const name = window.prompt("Enter a name for your new folder:");
+    const name = window.prompt("Enter folder name:");
     if (!name?.trim()) return;
     setFolders((old) => [...old, { id: Date.now(), name: name.trim(), category: activeCategory }]);
-    notify(`Folder "${name.trim()}" created`);
+    notify("Folder created");
   }
 
-  if (!authReady) {
-    return <div className="locksy-app" style={{ minHeight: "100vh", display: "grid", placeItems: "center" }}>Loading LOCKSY...</div>;
-  }
+  const visibleDocs = useMemo(() => documents.filter((doc) =>
+    (activePage !== "My Documents" || doc.category === activeCategory) &&
+    `${doc.name} ${doc.category}`.toLowerCase().includes(search.toLowerCase())
+  ), [documents, activePage, activeCategory, search]);
 
-  if (!user) return <Auth onLogin={login} />;
-
+  const recentDocs = [...documents].slice(0, 4);
   const displayName = "Aishwarya✨🎀";
-  const firstName = displayName.split(/[✨🎀 ]/)[0] || "there";
+
+  if (!authReady) return <div style={{ minHeight: "100vh", display: "grid", placeItems: "center" }}>Loading LOCKSY...</div>;
+  if (!user) return <Auth onLogin={setUser} />;
+
+  const navItems = [
+    { name: "Home", icon: Home },
+    { name: "My Documents", icon: Files },
+    { name: "Categories", icon: Folder },
+    { name: "Secure Share", icon: Share2 },
+    { name: "Activity", icon: Clock }
+  ];
 
   return (
-    <div className="locksy-app">
-      <style>{styles}</style>
+    <div className="locksy">
+      <style>{css}</style>
       <div className="locksy-layout">
         <aside className={`locksy-sidebar ${mobileOpen ? "mobile-open" : ""}`}>
-          <div className="locksy-logo">
-            <div className="locksy-logo-mark"><ShieldCheck size={25} /></div>
-            <div><strong>LOCKSY</strong><small>YOUR PRIVATE DIGITAL VAULT</small></div>
+          <div className="locksy-brand">
+            <div className="locksy-brand-icon"><ShieldCheck size={27} /></div>
+            <div><strong>LOCKSY</strong><small>Your Personal Digital Vault</small></div>
           </div>
 
-          <div className="locksy-nav-label">WORKSPACE</div>
+          <div className="locksy-nav-title">WORKSPACE</div>
           <nav className="locksy-nav">
-            <button className={activePage === "Dashboard" ? "active" : ""} onClick={() => { setActivePage("Dashboard"); setMobileOpen(false); }}><Home size={17} /><span>Dashboard</span></button>
-            <button className={activePage === "My Documents" ? "active" : ""} onClick={() => { setActivePage("My Documents"); setMobileOpen(false); }}><Files size={17} /><span>My Documents</span></button>
-            <button className={activePage === "Shared" ? "active" : ""} onClick={() => { setActivePage("Shared"); setMobileOpen(false); }}><Share2 size={17} /><span>Shared with me</span></button>
-            <button className={activePage === "Activity" ? "active" : ""} onClick={() => { setActivePage("Activity"); setMobileOpen(false); }}><Activity size={17} /><span>Activity</span></button>
+            {navItems.map(({ name, icon: Icon }) => (
+              <button key={name} className={activePage === name ? "active" : ""} onClick={() => { setActivePage(name); setMobileOpen(false); }}>
+                <Icon size={16} /><span>{name}</span>
+              </button>
+            ))}
           </nav>
 
-          <div className="locksy-nav-label">YOUR CATEGORIES</div>
+          <div className="locksy-nav-title">CATEGORIES</div>
           <nav className="locksy-nav">
-            {categories.map((category) => {
-              const Icon = category.icon;
-              return (
-                <button key={category.name} className={activePage === "My Documents" && activeCategory === category.name ? "active" : ""} onClick={() => openCategory(category.name)}>
-                  <Icon size={17} /><span>{category.name}</span><LockKeyhole size={12} />
-                </button>
-              );
-            })}
+            {categories.map(({ name, icon: Icon }) => (
+              <button key={name} className={activePage === "My Documents" && activeCategory === name ? "active" : ""} onClick={() => openCategory(name)}>
+                <Icon size={15} /><span>{name}</span><LockKeyhole size={11} />
+              </button>
+            ))}
           </nav>
 
-          <div className="locksy-sidebar-bottom">
-            <button className="locksy-nav" style={{ border: 0, background: "transparent", width: "100%" }} onClick={() => setShowSettings(true)}>
-              <span style={{ display: "flex", gap: 12, alignItems: "center", color: "#777186", padding: "10px 12px", fontSize: 13 }}><Settings size={17} /> Settings</span>
-            </button>
+          <div className="locksy-side-bottom">
+            <nav className="locksy-nav">
+              <button onClick={() => setShowSettings(true)}><Settings size={16} /><span>Settings</span></button>
+            </nav>
             <div className="locksy-profile">
-              <div className="locksy-avatar">
-                {user.photoURL ? <img src={user.photoURL} alt="Profile" /> : "A"}
-              </div>
-              <div className="locksy-profile-info">
-                <strong>{displayName}</strong>
-                <small>{user.email}</small>
-              </div>
-              <button className="locksy-icon-btn" title="Sign out" onClick={logout}><LogOut size={15} /></button>
+              <div className="locksy-avatar">{user.photoURL ? <img src={user.photoURL} alt="Profile" /> : "A"}</div>
+              <div className="locksy-profile-info"><strong>{displayName}</strong><small>{user.email}</small></div>
+              <button className="locksy-logout" title="Sign out" onClick={logout}><LogOut size={14} /></button>
             </div>
           </div>
         </aside>
 
         <main className="locksy-main">
           <header className="locksy-topbar">
-            <div style={{ display: "flex", alignItems: "center", gap: 10, flex: 1 }}>
-              <button className="locksy-icon-btn locksy-mobile-menu" onClick={() => setMobileOpen(!mobileOpen)}><Menu size={18} /></button>
-              <label className="locksy-search">
-                <Search size={17} />
-                <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search your documents..." />
-              </label>
-            </div>
-            <div className="locksy-top-actions">
-              <button className="locksy-icon-btn" title="Notifications" onClick={() => notify("You're all caught up!") }><Bell size={17} /></button>
-              <button className="locksy-icon-btn" title="Profile settings" onClick={() => setShowSettings(true)}><UserCircle size={18} /></button>
-            </div>
+            <button className="locksy-icon-button locksy-mobile-menu" onClick={() => setMobileOpen((v) => !v)}><Menu size={17} /></button>
+            <label className="locksy-search"><Search size={15} /><input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search documents..." /></label>
+            <button className="locksy-icon-button" onClick={() => notify("You're all caught up!")} title="Notifications"><Bell size={16} /></button>
           </header>
 
-          {activePage === "Dashboard" && (
+          {activePage === "Home" && (
             <>
               <section className="locksy-welcome">
-                <div>
-                  <h1>Welcome back, {firstName}! ✨</h1>
-                  <p>Your important documents, organized and close at hand.</p>
+                <div><h1>Welcome back, Aishwarya! ✨</h1><p>Your important documents, organized and close at hand.</p></div>
+                <ShieldCheck className="locksy-welcome-icon" size={40} />
+              </section>
+
+              <section>
+                <div className="locksy-section-head"><div><h2>Your Categories</h2><p>Everything important in one private place</p></div><button className="locksy-text-button" onClick={() => setActivePage("Categories")}>View all →</button></div>
+                <div className="locksy-category-grid">
+                  {categories.map(({ name, icon: Icon, color, bg }) => {
+                    const count = documents.filter((doc) => doc.category === name).length;
+                    return <button className="locksy-category" key={name} onClick={() => openCategory(name)}>
+                      <span className="locksy-category-icon" style={{ color, background: bg }}><Icon size={18} /></span>
+                      <strong>{name}</strong><small>{count} documents</small>
+                    </button>;
+                  })}
                 </div>
-                <div className="locksy-welcome-icon"><ShieldCheck size={36} /></div>
               </section>
 
-              <div className="locksy-section-heading">
-                <div><h2>Your Categories</h2><p>Everything important, in one private place</p></div>
-                <button className="locksy-link" onClick={() => setActivePage("My Documents")}>View all</button>
+              <div className="locksy-bottom-grid">
+                <section className="locksy-glass-card locksy-share-card">
+                  <div className="locksy-section-head"><h2>Secure Sharing</h2><Share2 size={15} /></div>
+                  <div className="locksy-share-icon"><ShieldCheck size={23} /></div>
+                  <h3>Your vault is ready!</h3>
+                  <p>Secure document sharing will be available when access permissions are implemented.</p>
+                  <button className="locksy-mini-button" onClick={() => setActivePage("Secure Share")}>Explore sharing</button>
+                </section>
+                <section className="locksy-glass-card">
+                  <div className="locksy-section-head"><div><h2>Memories</h2><p>Your private photo space</p></div><ImageIcon size={15} /></div>
+                  <div className="locksy-memory-grid">
+                    {["🌅","🐶","🌸","🏞️","🌊","🌻"].map((emoji, i) => <div className="locksy-memory" key={i}>{emoji}</div>)}
+                  </div>
+                  <p className="locksy-demo-label">Decorative preview · Add your own photos in Private Photos</p>
+                </section>
               </div>
-
-              <section className="locksy-category-grid">
-                {categories.map((category) => {
-                  const Icon = category.icon;
-                  const count = documents.filter((doc) => doc.category === category.name).length;
-                  return (
-                    <button className="locksy-category-card" key={category.name} onClick={() => openCategory(category.name)}>
-                      <span className="locksy-category-icon" style={{ background: category.bg, color: category.color }}><Icon size={21} strokeWidth={1.9} /></span>
-                      <strong>{category.name}</strong>
-                      <small>{count} {count === 1 ? "document" : "documents"}</small>
-                    </button>
-                  );
-                })}
-              </section>
-
-              <div className="locksy-section-heading">
-                <div><h2>Recently Added</h2><p>Your latest documents and files</p></div>
-                <button className="locksy-link" onClick={() => setActivePage("My Documents")}>View all</button>
-              </div>
-
-              <section className="locksy-recent-list">
-                {recentDocuments.map((doc) => <DocumentRow key={doc.id} doc={doc} onDelete={deleteDocument} />)}
-              </section>
-              <p className="locksy-demo-note">Some entries are sample documents for preview. Upload your own files to add real documents.</p>
             </>
           )}
 
           {activePage === "My Documents" && (
-            <>
-              <div className="locksy-page-title">
-                <div><h1>{activeCategory}</h1><p>Manage your {activeCategory.toLowerCase()} documents in one place.</p></div>
-                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                  <button className="locksy-secondary" onClick={createFolder}><FolderPlus size={15} /> Create Folder</button>
-                  <button className="locksy-primary" onClick={() => fileRef.current?.click()}><Plus size={16} /> Add Document</button>
-                </div>
+            <section className="locksy-page">
+              <h1>{activeCategory}</h1>
+              <p>Organize and manage your {activeCategory.toLowerCase()} files.</p>
+              <div className="locksy-page-actions">
+                <button className="locksy-secondary" onClick={createFolder}><FolderPlus size={14} /> Create Folder</button>
+                <button className="locksy-primary" onClick={() => fileRef.current?.click()}><Plus size={14} /> Add Document</button>
               </div>
-
-              {folders.filter((folder) => folder.category === activeCategory).map((folder) => (
-                <div className="locksy-doc-row" key={folder.id}>
-                  <span className="locksy-file-icon"><Folder size={19} /></span>
-                  <div className="locksy-doc-info"><strong>{folder.name}</strong><small>Folder · {folder.category}</small></div>
-                </div>
-              ))}
-
-              <section className="locksy-recent-list">
-                {filteredDocuments.length ? filteredDocuments.map((doc) => <DocumentRow key={doc.id} doc={doc} onDelete={deleteDocument} />) : (
-                  <div className="locksy-empty"><FolderOpen size={35} /><h3>No documents yet</h3><p>Add your first document to this category.</p></div>
-                )}
-              </section>
-              <p className="locksy-demo-note">Example entries are for demonstration only. Uploaded files are temporary until persistent storage is connected.</p>
-            </>
+              {folders.filter((f) => f.category === activeCategory).map((folder) => <div className="locksy-doc" key={folder.id}><div className="locksy-doc-icon"><Folder size={16} /></div><div className="locksy-doc-info"><strong>{folder.name}</strong><small>Folder</small></div></div>)}
+              <div className="locksy-doc-list">
+                {visibleDocs.map((doc) => <DocumentRow key={doc.id} doc={doc} onDelete={removeDocument} onPreview={setPreviewDoc} />)}
+                {!visibleDocs.length && <div className="locksy-empty"><Folder size={30} /><h3>No documents found</h3>Add a document to get started.</div>}
+              </div>
+              <p className="locksy-demo-label">Example entries are samples. Uploaded files are temporary until persistent storage is connected.</p>
+            </section>
           )}
 
-          {activePage === "Shared" && (
-            <div className="locksy-empty"><Share2 size={35} /><h3>No shared documents yet</h3><p>Shared documents will appear here when secure sharing is implemented.</p></div>
+          {activePage === "Categories" && (
+            <section className="locksy-page">
+              <h1>All Categories</h1><p>Choose a private section to open.</p>
+              <div className="locksy-category-grid" style={{ marginTop: 15 }}>
+                {categories.map(({ name, icon: Icon, color, bg }) => <button className="locksy-category" key={name} onClick={() => openCategory(name)}><span className="locksy-category-icon" style={{ color, background: bg }}><Icon size={18} /></span><strong>{name}</strong><small>{documents.filter((d) => d.category === name).length} documents</small></button>)}
+              </div>
+            </section>
+          )}
+
+          {activePage === "Secure Share" && (
+            <section className="locksy-page">
+              <h1>Secure Sharing</h1><p>Share selected documents with controlled access.</p>
+              <div className="locksy-empty"><ShieldCheck size={36} /><h3>Secure sharing is coming next</h3>Time limits, recipient permissions and revocation need backend implementation before sharing is enabled.</div>
+            </section>
           )}
 
           {activePage === "Activity" && (
-            <div className="locksy-empty"><Activity size={35} /><h3>Activity overview</h3><p>Your recent activity will appear here as activity tracking is added.</p></div>
+            <section className="locksy-page">
+              <h1>Activity</h1><p>Recent actions in your vault.</p>
+              <div className="locksy-empty"><Activity size={35} /><h3>Activity tracking is not connected yet</h3>This panel is a design preview.</div>
+            </section>
           )}
 
           <input ref={fileRef} type="file" multiple hidden onChange={addFiles} />
         </main>
+
+        <aside className="locksy-right">
+          <section className="locksy-glass-card">
+            <h3 className="locksy-right-title">Document Preview <Eye size={14} /></h3>
+            {previewDoc ? (
+              <>
+                <strong style={{ fontSize: 10 }}>{previewDoc.name}</strong>
+                {previewDoc.url && previewDoc.type?.startsWith("image/") && <img src={previewDoc.url} alt={previewDoc.name} style={{ width: "100%", marginTop: 9, borderRadius: 8 }} />}
+                {previewDoc.url && previewDoc.type === "application/pdf" && <iframe title="Document preview" src={previewDoc.url} style={{ width: "100%", height: 190, border: 0, marginTop: 8, borderRadius: 8, background: "white" }} />}
+                {!previewDoc.url && <p>This is a sample entry. Upload a real file to preview it.</p>}
+                <button className="locksy-mini-button" onClick={() => setPreviewDoc(null)}>Close preview</button>
+              </>
+            ) : (
+              <div className="locksy-empty"><FileText size={27} /><p>Select an uploaded file to preview it here.</p></div>
+            )}
+          </section>
+
+          <section className="locksy-glass-card">
+            <h3 className="locksy-right-title">Recent Documents <button className="locksy-text-button" onClick={() => setActivePage("My Documents")}>View all</button></h3>
+            <div className="locksy-doc-list">
+              {recentDocs.map((doc) => <DocumentRow key={doc.id} doc={doc} onDelete={removeDocument} onPreview={setPreviewDoc} compact />)}
+            </div>
+          </section>
+
+          <section className="locksy-glass-card">
+            <h3 className="locksy-right-title">Activity Log <span style={{ color: "#A8F1E4" }}>Live preview</span></h3>
+            {[
+              ["Document added","Your vault has sample documents"],
+              ["Access protected","Section PIN feature available"],
+              ["Vault opened","You signed in successfully"]
+            ].map(([title, detail], i) => <div className="locksy-activity-item" key={i}><span className="locksy-activity-dot"><ShieldCheck size={12} /></span><div><strong>{title}</strong><small>{detail}</small></div></div>)}
+          </section>
+        </aside>
       </div>
 
-      {pinSection && (
-        <SectionPin
-          section={pinSection}
-          onClose={() => setPinSection(null)}
-          onUnlock={() => {
-            setUnlockedSections((old) => [...new Set([...old, pinSection])]);
-            setActiveCategory(pinSection);
-            setActivePage("My Documents");
-            notify(`${pinSection} unlocked successfully`);
-          }}
-        />
-      )}
+      {pinSection && <SectionPin section={pinSection} onClose={() => setPinSection(null)} onUnlock={() => {
+        setUnlocked((old) => [...new Set([...old, pinSection])]);
+        notify(`${pinSection} unlocked`);
+      }} />}
 
-      {showSettings && (
-        <div className="locksy-modal-backdrop" onClick={() => setShowSettings(false)}>
-          <div className="locksy-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="locksy-modal-head"><h2>Profile & Settings</h2><button className="locksy-icon-btn" onClick={() => setShowSettings(false)}><X size={17} /></button></div>
-            <div className="locksy-profile" style={{ padding: "12px 0" }}>
-              <div className="locksy-avatar">{user.photoURL ? <img src={user.photoURL} alt="Profile" /> : "A"}</div>
-              <div className="locksy-profile-info"><strong>{displayName}</strong><small>{user.email}</small></div>
-            </div>
-            <p>Your Google or email sign-in is managed by Firebase Authentication.</p>
-            <p>Section PINs are currently stored locally in this browser. They are a prototype feature, not a secure vault boundary.</p>
-            <div className="locksy-modal-actions"><button className="locksy-primary" onClick={() => setShowSettings(false)}>Close</button></div>
-          </div>
-        </div>
-      )}
+      {showSettings && <div className="locksy-modal-bg" onClick={() => setShowSettings(false)}><div className="locksy-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="locksy-modal-head"><h2>Profile & Settings</h2><button className="locksy-icon-button" onClick={() => setShowSettings(false)}><X size={15} /></button></div>
+        <div className="locksy-profile"><div className="locksy-avatar">{user.photoURL ? <img src={user.photoURL} alt="Profile" /> : "A"}</div><div className="locksy-profile-info"><strong>{displayName}</strong><small>{user.email}</small></div></div>
+        <p>Your account is managed by Firebase Authentication. Additional profile and security settings will be added in later steps.</p>
+        <div className="locksy-modal-actions"><button className="locksy-primary" onClick={() => setShowSettings(false)}>Close</button></div>
+      </div></div>}
+
+      {previewDoc && <div className="locksy-modal-bg" onClick={() => setPreviewDoc(null)}><div className="locksy-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="locksy-modal-head"><h2>{previewDoc.name}</h2><button className="locksy-icon-button" onClick={() => setPreviewDoc(null)}><X size={15} /></button></div>
+        <p>{previewDoc.demo ? "This is a sample document entry. Upload a real file to preview its contents." : "Use the document preview panel on the right to view this file."}</p>
+        {previewDoc.url && <a className="locksy-mini-button" href={previewDoc.url} target="_blank" rel="noreferrer">Open document in new tab</a>}
+      </div></div>}
 
       {notice && <div className="locksy-notice">{notice}</div>}
     </div>
   );
 }
 
-function DocumentRow({ doc, onDelete }) {
+function DocumentRow({ doc, onDelete, onPreview, compact }) {
   const isImage = doc.type?.startsWith("image/");
   return (
-    <div className="locksy-doc-row">
-      <span className="locksy-file-icon">
-        {isImage ? <ImageIcon size={19} /> : <FileText size={19} />}
-      </span>
+    <div className="locksy-doc">
+      <span className="locksy-doc-icon">{isImage ? <ImageIcon size={15} /> : <FileText size={15} />}</span>
       <div className="locksy-doc-info">
         <strong>{doc.name}</strong>
-        <small>{doc.category} · {doc.date}{doc.demo ? " · Example" : ""}</small>
+        <small>{doc.category} · {doc.date}{doc.demo ? " · Sample" : ""}</small>
       </div>
       <div className="locksy-doc-actions">
-        {doc.url ? (
-          <>
-            <a href={doc.url} target="_blank" rel="noreferrer" title="Preview document"><Eye size={16} /></a>
-            <a href={doc.url} download={doc.name} title="Download document"><Download size={16} /></a>
-          </>
-        ) : doc.demo ? (
-          <span title="Sample entry" style={{ color: "#A49BAF", fontSize: 10 }}>Sample</span>
-        ) : null}
-        <button title="Remove document" onClick={() => onDelete(doc.id)}><Trash2 size={16} /></button>
+        {doc.url && <button title="Preview" onClick={() => onPreview(doc)}><Eye size={13} /></button>}
+        {doc.url && <a title="Download" href={doc.url} download={doc.name}><Download size={13} /></a>}
+        {!compact && <button title="Remove" onClick={() => onDelete(doc.id)}><Trash2 size={13} /></button>}
       </div>
     </div>
   );
@@ -487,45 +470,33 @@ function SectionPin({ section, onClose, onUnlock }) {
   const [savedPin, setSavedPin] = useState(localStorage.getItem(`locksy-pin-${section}`) || "");
   const [error, setError] = useState("");
 
-  function submitPin(event) {
+  function submit(event) {
     event.preventDefault();
-
     if (!/^\d{4,6}$/.test(pin)) {
       setError("Enter a 4 to 6 digit PIN.");
       return;
     }
-
     if (!savedPin) {
       localStorage.setItem(`locksy-pin-${section}`, pin);
       setSavedPin(pin);
       setPin("");
-      setError("PIN created. Enter it again to unlock this section.");
-      return;
-    }
-
-    if (pin === savedPin) {
-      setPin("");
+      setError("PIN created. Enter it again to unlock.");
+    } else if (pin === savedPin) {
       onUnlock();
       onClose();
     } else {
-      setError("Incorrect PIN. Please try again.");
+      setError("Incorrect PIN. Try again.");
     }
   }
 
   return (
-    <div className="locksy-modal-backdrop" onClick={onClose}>
-      <form className="locksy-modal" onSubmit={submitPin} onClick={(e) => e.stopPropagation()}>
-        <div className="locksy-modal-head">
-          <h2><LockKeyhole size={19} style={{ verticalAlign: "middle", marginRight: 7 }} />{section} PIN Lock</h2>
-          <button type="button" className="locksy-icon-btn" onClick={onClose}><X size={17} /></button>
-        </div>
-        <p>{savedPin ? "Enter your PIN to unlock this section." : "Create a 4 to 6 digit PIN for this section."}</p>
-        <input type="password" inputMode="numeric" maxLength={6} pattern="[0-9]{4,6}" placeholder="Enter PIN" value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))} required autoFocus />
-        {error && <p style={{ color: error.startsWith("Incorrect") ? "#D9485F" : "#159B82" }}>{error}</p>}
-        <div className="locksy-modal-actions">
-          <button type="button" className="locksy-secondary" onClick={onClose}>Cancel</button>
-          <button type="submit" className="locksy-primary">{savedPin ? "Unlock Section" : "Create PIN"}</button>
-        </div>
+    <div className="locksy-modal-bg" onClick={onClose}>
+      <form className="locksy-modal" onSubmit={submit} onClick={(e) => e.stopPropagation()}>
+        <div className="locksy-modal-head"><h2><LockKeyhole size={17} /> {section} PIN</h2><button type="button" className="locksy-icon-button" onClick={onClose}><X size={15} /></button></div>
+        <p>{savedPin ? "Enter your PIN to unlock this category." : "Create a 4 to 6 digit PIN for this category."}</p>
+        <input type="password" inputMode="numeric" maxLength={6} placeholder="Enter PIN" value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))} required />
+        {error && <p>{error}</p>}
+        <div className="locksy-modal-actions"><button type="button" className="locksy-secondary" onClick={onClose}>Cancel</button><button className="locksy-primary" type="submit">{savedPin ? "Unlock" : "Create PIN"}</button></div>
       </form>
     </div>
   );
