@@ -1,7 +1,7 @@
 
-/* =========================================
-   LOCKSY - MODERN PURPLE LOGIN DESIGN
-   ========================================= */
+/* =====================================
+   LOCKSY — PURPLE + TEAL DESIGN SYSTEM
+===================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
@@ -9,13 +9,28 @@
   box-sizing: border-box;
 }
 
+:root {
+  --purple: #7050df;
+  --purple-dark: #321477;
+  --teal: #08b6a8;
+  --text: #292342;
+  --muted: #9189a3;
+  --border: #eee9f8;
+  --soft-purple: #f0ebff;
+}
+
 body {
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+}
+
+#root {
   font-family: 'DM Sans', sans-serif;
 }
 
-/* =========================================
+/* =====================================
    LOGIN PAGE
-   ========================================= */
+===================================== */
 
 .locksy-auth {
   min-height: 100vh;
@@ -23,27 +38,27 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 30px;
-  background:
-    radial-gradient(ellipse at 10% 10%, #e4d5ff 0%, transparent 40%),
-    radial-gradient(ellipse at 90% 90%, #c9e8ff 0%, transparent 38%),
-    linear-gradient(135deg, #f8f2ff, #edf0ff 55%, #f4eaff);
+  padding: 25px;
   overflow: hidden;
+  background:
+    radial-gradient(circle at 12% 15%, #b7a2ff 0%, transparent 35%),
+    radial-gradient(circle at 85% 85%, #8ce9dc 0%, transparent 35%),
+    linear-gradient(135deg, #24105e, #087e88);
 }
 
 .locksy-auth-card {
   width: min(1050px, 100%);
   min-height: 620px;
   display: grid;
-  grid-template-columns: 0.95fr 1.05fr;
+  grid-template-columns: .95fr 1.05fr;
   overflow: hidden;
-  border-radius: 30px;
-  background: #ffffff;
-  box-shadow: 0 25px 80px rgba(76, 43, 150, 0.16);
-  border: 1px solid rgba(255,255,255,0.9);
+  border: 1px solid #ffffff88;
+  border-radius: 26px;
+  background: #fff;
+  box-shadow: 0 25px 80px #180c4e40;
 }
 
-/* Left illustration panel */
+/* Left visual panel */
 
 .locksy-auth-visual {
   position: relative;
@@ -54,37 +69,40 @@ body {
   flex-direction: column;
   overflow: hidden;
   color: #fff;
-  background: linear-gradient(155deg, #e5d4ff 0%, #a98aff 48%, #6041d6 100%);
+  background:
+    radial-gradient(circle at 20% 20%, #a78bfa 0%, transparent 38%),
+    radial-gradient(circle at 85% 80%, #08b6a8 0%, transparent 42%),
+    linear-gradient(145deg, #321477, #6540c8 55%, #087f88);
 }
+
+/* Subtle decorative sparkles */
 
 .locksy-auth-visual::before,
 .locksy-auth-visual::after {
-  content: "";
+  content: "✦";
   position: absolute;
-  border-radius: 50%;
+  color: #fff;
+  font-size: 14px;
+  opacity: .45;
   pointer-events: none;
+  animation: locksySparkle 3s ease-in-out infinite;
 }
 
 .locksy-auth-visual::before {
-  width: 330px;
-  height: 330px;
-  top: 100px;
-  left: -160px;
-  background: rgba(255,255,255,0.13);
+  top: 18%;
+  left: 12%;
 }
 
 .locksy-auth-visual::after {
-  width: 280px;
-  height: 280px;
-  bottom: -100px;
-  right: -100px;
-  background: rgba(255,255,255,0.12);
+  bottom: 17%;
+  right: 13%;
+  animation-delay: 1.2s;
 }
 
 .auth-glow {
   position: absolute;
   border-radius: 50%;
-  filter: blur(35px);
+  filter: blur(60px);
   pointer-events: none;
 }
 
@@ -93,7 +111,8 @@ body {
   height: 170px;
   top: 90px;
   right: 20px;
-  background: rgba(255,255,255,0.22);
+  background: #a78bfa;
+  opacity: .5;
 }
 
 .auth-glow-two {
@@ -101,7 +120,8 @@ body {
   height: 150px;
   bottom: 80px;
   left: 10px;
-  background: rgba(62, 223, 222, 0.22);
+  background: #00d6c1;
+  opacity: .45;
 }
 
 .locksy-logo-symbol {
@@ -111,10 +131,11 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  border: 1px solid #ffffff55;
   border-radius: 27px;
-  color: white;
-  background: linear-gradient(145deg, #5b7bff, #3023a5);
-  box-shadow: 0 14px 35px rgba(44, 24, 130, 0.28);
+  color: #fff;
+  background: linear-gradient(145deg, #8b6bff, #06b9ac);
+  box-shadow: 0 12px 35px #10083f66;
   z-index: 1;
 }
 
@@ -129,13 +150,14 @@ body {
   color: #fff;
   font-size: 42px;
   font-weight: 850;
-  letter-spacing: -1.5px;
+  letter-spacing: 3px;
+  text-shadow: 0 4px 20px #16074766;
   z-index: 1;
 }
 
 .locksy-brand-tagline {
   margin: 0;
-  color: #fff;
+  color: #e7fffc;
   font-size: 14px;
   font-weight: 600;
   z-index: 1;
@@ -150,6 +172,7 @@ body {
   align-items: center;
   justify-content: center;
   margin-top: 18px;
+  filter: drop-shadow(0 15px 25px #170c4d44);
   z-index: 1;
 }
 
@@ -161,8 +184,8 @@ body {
   justify-content: center;
   align-items: center;
   border-radius: 25px 25px 35px 35px;
-  background: linear-gradient(145deg, #ffffff, #d9d1ff);
-  box-shadow: 0 22px 35px rgba(39, 20, 117, 0.28);
+  background: linear-gradient(145deg, #fff, #d9d1ff);
+  box-shadow: 0 22px 35px #27147547;
   transform: perspective(500px) rotateX(5deg);
 }
 
@@ -186,17 +209,17 @@ body {
   color: #fff;
   border-radius: 25px;
   background: linear-gradient(145deg, #537bff, #3925bc);
-  box-shadow: 0 10px 22px rgba(48, 35, 160, 0.25);
+  box-shadow: 0 10px 22px #3023a040;
 }
 
 .folder-lock {
   position: absolute;
   right: 18px;
   bottom: 14px;
+  padding: 7px;
+  border-radius: 50%;
   color: #fff;
   background: #20bfc1;
-  border-radius: 50%;
-  padding: 7px;
   box-sizing: content-box;
 }
 
@@ -209,8 +232,8 @@ body {
   justify-content: center;
   border-radius: 14px;
   color: #6043d7;
-  background: rgba(255,255,255,0.94);
-  box-shadow: 0 10px 25px rgba(42, 22, 120, 0.18);
+  background: #fffffff0;
+  box-shadow: 0 10px 25px #2a16702e;
 }
 
 .floating-file-one {
@@ -227,8 +250,11 @@ body {
 
 .floating-sparkle {
   position: absolute;
-  color: #fff;
-  font-size: 29px;
+  color: #aafff1;
+  font-size: 17px;
+  opacity: .7;
+  text-shadow: 0 0 10px #ffffff;
+  animation: locksySparkle 2.5s ease-in-out infinite;
 }
 
 .sparkle-one {
@@ -239,12 +265,14 @@ body {
 .sparkle-two {
   top: 35px;
   right: 55px;
-  font-size: 35px;
+  font-size: 19px;
+  animation-delay: .8s;
 }
 
 .sparkle-three {
   bottom: 18px;
   left: 48%;
+  animation-delay: 1.5s;
 }
 
 .auth-visual-footer {
@@ -266,7 +294,9 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background: #fff;
+  background:
+    radial-gradient(circle at 100% 100%, #d8fff6 0%, transparent 35%),
+    linear-gradient(145deg, #fff, #f8f6ff);
 }
 
 .locksy-mobile-brand {
@@ -278,33 +308,33 @@ body {
 }
 
 .auth-eyebrow {
-  color: #7554d9;
+  color: #7652d8;
   font-size: 11px;
   font-weight: 800;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
 }
 
 .locksy-form-heading h2 {
   margin: 12px 0 8px;
-  color: #21183f;
+  color: #251454;
   font-size: 34px;
   font-weight: 800;
-  letter-spacing: -1px;
+  letter-spacing: -1.5px;
 }
 
 .locksy-form-heading p {
   margin: 0;
-  color: #817b91;
+  color: #77718f;
   font-size: 14px;
   line-height: 1.7;
 }
 
 .google-signin-section {
   min-height: 46px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .google-signin-section > div {
@@ -332,7 +362,7 @@ body {
   content: "";
   flex: 1;
   height: 1px;
-  background: #eeeaf5;
+  background: #e7e0f4;
 }
 
 .locksy-login-form {
@@ -354,20 +384,18 @@ body {
   width: 100%;
   min-height: 48px;
   padding: 0 15px;
-  border: 1px solid #e7e1f0;
-  border-radius: 12px;
+  border: 1px solid #e2dafa;
+  border-radius: 13px;
   outline: none;
   color: #302642;
-  background: #fbfaff;
+  background: #fff;
   font-size: 13px;
-  transition: 0.2s ease;
-  box-sizing: border-box;
+  transition: .25s ease;
 }
 
 .locksy-auth .auth-label input:focus {
-  border-color: #8a67e9;
-  background: #fff;
-  box-shadow: 0 0 0 3px rgba(125, 88, 218, 0.10);
+  border-color: #13b8aa;
+  box-shadow: 0 0 0 4px #13b8aa20;
 }
 
 .locksy-auth .auth-submit {
@@ -377,21 +405,21 @@ body {
   border: 0;
   border-radius: 13px;
   color: #fff;
-  background: linear-gradient(100deg, #7050e6, #5129c8);
-  box-shadow: 0 9px 20px rgba(94, 55, 197, 0.22);
+  background: linear-gradient(105deg, #7650df, #5544c9, #08a99e);
+  box-shadow: 0 8px 22px #5740bd35;
   font-size: 14px;
   font-weight: 750;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform .2s ease, box-shadow .2s ease;
 }
 
 .locksy-auth .auth-submit:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 25px rgba(94, 55, 197, 0.30);
+  box-shadow: 0 12px 28px #08a99e45;
 }
 
 .locksy-auth .auth-submit:disabled {
-  opacity: 0.65;
+  opacity: .65;
   cursor: wait;
   transform: none;
 }
@@ -414,21 +442,25 @@ body {
 }
 
 .locksy-auth .auth-switch button {
-  border: 0;
   padding: 0;
-  color: #6745d4;
+  border: 0;
+  color: #7050d5;
   background: transparent;
   font-weight: 800;
   cursor: pointer;
 }
 
+.locksy-auth .auth-switch button:hover {
+  color: #079d94;
+}
+
 .locksy-auth-security {
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   margin-top: 32px;
-  color: #8a81a0;
+  color: #087e78;
   font-size: 12px;
 }
 
@@ -436,11 +468,210 @@ body {
   color: #29aaa1;
 }
 
-/* Responsive login */
+/* =====================================
+   DASHBOARD
+===================================== */
+
+.app,
+.dashboard,
+.main-content {
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+}
+
+.app h1,
+.app h2,
+.app h3,
+.dashboard h1,
+.dashboard h2,
+.dashboard h3 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: var(--text);
+  letter-spacing: -.6px;
+}
+
+.app h1,
+.dashboard h1 {
+  font-size: 27px;
+  font-weight: 800;
+}
+
+.app h2,
+.dashboard h2 {
+  font-size: 21px;
+  font-weight: 750;
+}
+
+.app p,
+.dashboard p {
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.app button,
+.dashboard button {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+}
+
+/* Category and folder cards */
+
+.category-card,
+.category-item,
+.folder-card {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 5px 18px #3724690b;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.category-card:hover,
+.category-item:hover,
+.folder-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px #4b31911a;
+}
+
+.category-card h3,
+.category-item h3,
+.category-card strong,
+.category-item strong {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: #30264d;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -.2px;
+}
+
+.category-card p,
+.category-item p,
+.category-card small,
+.category-item small {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.category-card svg,
+.category-item svg {
+  width: 23px;
+  height: 23px;
+  stroke-width: 1.8;
+}
+
+/* Document rows */
+
+.doc-row {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  border: 1px solid #eeeaf5;
+  border-radius: 14px;
+  background: #fff;
+  transition: background .2s ease, border-color .2s ease;
+}
+
+.doc-row:hover {
+  border-color: #ded3fa;
+  background: #faf8ff;
+}
+
+.doc-info strong {
+  display: block;
+  color: #30264d;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.doc-info small {
+  display: block;
+  margin-top: 4px;
+  color: #928ba2;
+  font-size: 11px;
+}
+
+.file-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 12px;
+  color: #7352d8;
+  background: var(--soft-purple);
+}
+
+.file-icon svg {
+  width: 19px;
+  height: 19px;
+  stroke-width: 1.8;
+}
+
+/* =====================================
+   SPARKLE ANIMATIONS
+===================================== */
+
+@keyframes locksySparkle {
+  0%, 100% {
+    opacity: .35;
+    transform: scale(.85);
+  }
+  50% {
+    opacity: .75;
+    transform: scale(1.1);
+  }
+}
+
+/* Only two tiny background sparkles */
+
+body::before,
+body::after {
+  content: "✦";
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  font-size: 7px;
+  opacity: .3;
+  color: #9270ff;
+  text-shadow: 0 0 5px #a78bfa;
+  animation: locksyFloatingSparkle 5s ease-in-out infinite;
+}
+
+body::before {
+  top: 20%;
+  right: 10%;
+}
+
+body::after {
+  content: "✧";
+  bottom: 20%;
+  left: 9%;
+  color: #12bbae;
+  animation-delay: 2s;
+}
+
+@keyframes locksyFloatingSparkle {
+  0%, 100% {
+    opacity: .15;
+    transform: scale(.8);
+  }
+  50% {
+    opacity: .4;
+    transform: scale(1);
+  }
+}
+
+/* =====================================
+   RESPONSIVE DESIGN
+===================================== */
 
 @media (max-width: 760px) {
   .locksy-auth {
-    min-height: 100vh;
     padding: 15px;
   }
 
@@ -542,194 +773,10 @@ body {
     padding: 30px 25px 27px;
   }
 
-  .locksy-mobile-brand {
-    display: none;
-  }
-
   .locksy-form-heading h2 {
     font-size: 27px;
   }
-}
 
-@media (max-width: 380px) {
-  .locksy-auth-form-panel {
-    padding: 25px 18px;
-  }
-
-  .locksy-form-heading h2 {
-    font-size: 24px;
-  }
-}
-
-/* =========================================
-   LOCKSY - MODERN DASHBOARD TYPOGRAPHY
-   ========================================= */
-
-#root {
-  font-family: 'DM Sans', sans-serif;
-}
-
-.app,
-.dashboard,
-.main-content {
-  font-family: 'DM Sans', sans-serif;
-  color: #292342;
-}
-
-.app h1,
-.app h2,
-.app h3,
-.dashboard h1,
-.dashboard h2,
-.dashboard h3 {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  letter-spacing: -0.6px;
-  color: #292342;
-}
-
-.app h1,
-.dashboard h1 {
-  font-size: 27px;
-  font-weight: 800;
-}
-
-.app h2,
-.dashboard h2 {
-  font-size: 21px;
-  font-weight: 750;
-}
-
-.app p,
-.dashboard p {
-  font-size: 13px;
-  line-height: 1.6;
-}
-
-/* =========================================
-   CATEGORY CARDS
-   ========================================= */
-
-.category-card,
-.category-item,
-.folder-card {
-  border: 1px solid #eee9f8;
-  border-radius: 18px;
-  background: #fff;
-  box-shadow: 0 5px 18px rgba(55, 36, 105, 0.045);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.category-card:hover,
-.category-item:hover,
-.folder-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 25px rgba(75, 49, 145, 0.10);
-}
-
-/* Category names */
-
-.category-card h3,
-.category-item h3,
-.category-card strong,
-.category-item strong {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  color: #30264d;
-  letter-spacing: -0.2px;
-}
-
-/* Category descriptions and counts */
-
-.category-card p,
-.category-item p,
-.category-card small,
-.category-item small {
-  font-size: 11px;
-  font-weight: 500;
-  color: #9189a3;
-}
-
-/* Category icons */
-
-.category-card svg,
-.category-item svg {
-  width: 23px;
-  height: 23px;
-  stroke-width: 1.8;
-}
-
-/* =========================================
-   DOCUMENT ROWS
-   ========================================= */
-
-.doc-row {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  padding: 14px 16px;
-  margin-bottom: 10px;
-  border: 1px solid #eeeaf5;
-  border-radius: 14px;
-  background: #fff;
-  transition: background 0.2s ease, border-color 0.2s ease;
-}
-
-.doc-row:hover {
-  background: #faf8ff;
-  border-color: #ded3fa;
-}
-
-.doc-info strong {
-  display: block;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  color: #30264d;
-}
-
-.doc-info small {
-  display: block;
-  margin-top: 4px;
-  font-size: 11px;
-  color: #928ba2;
-}
-
-/* File icons */
-
-.file-icon {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  border-radius: 12px;
-  color: #7352d8;
-  background: #f0ebff;
-}
-
-.file-icon svg {
-  width: 19px;
-  height: 19px;
-  stroke-width: 1.8;
-}
-
-/* =========================================
-   BUTTONS
-   ========================================= */
-
-.app button,
-.dashboard button {
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 600;
-}
-
-/* =========================================
-   RESPONSIVE DASHBOARD
-   ========================================= */
-
-@media (max-width: 600px) {
   .app h1,
   .dashboard h1 {
     font-size: 23px;
@@ -751,232 +798,12 @@ body {
   }
 }
 
-/* =================================
-   LOCKSY PURPLE + TEAL AUTH THEME
-================================= */
-
-.locksy-auth {
-  background:
-    radial-gradient(circle at 12% 15%, #b7a2ff 0%, transparent 35%),
-    radial-gradient(circle at 85% 85%, #8ce9dc 0%, transparent 35%),
-    linear-gradient(135deg, #24105e, #087e88);
-  padding: 25px;
-}
-
-.locksy-auth-card {
-  border: 1px solid rgba(255,255,255,.55);
-  border-radius: 26px;
-  overflow: hidden;
-  box-shadow: 0 25px 80px rgba(24, 12, 78, .25);
-}
-
-.locksy-auth-visual {
-  background:
-    radial-gradient(circle at 20% 20%, #a78bfa 0%, transparent 38%),
-    radial-gradient(circle at 85% 80%, #08b6a8 0%, transparent 42%),
-    linear-gradient(145deg, #321477, #6540c8 55%, #087f88);
-  position: relative;
-  overflow: hidden;
-}
-
-.locksy-auth-visual::before,
-.locksy-auth-visual::after {
-  content: "✦";
-  position: absolute;
-  color: #ffffff;
-  font-size: 35px;
-  opacity: .8;
-  animation: locksySparkle 3s ease-in-out infinite;
-}
-
-.locksy-auth-visual::before {
-  top: 18%;
-  left: 12%;
-}
-
-.locksy-auth-visual::after {
-  bottom: 17%;
-  right: 13%;
-  animation-delay: 1.2s;
-}
-
-.locksy-brand-name {
-  color: #fff;
-  letter-spacing: 3px;
-  text-shadow: 0 4px 20px #16074766;
-}
-
-.locksy-brand-tagline {
-  color: #e7fffc;
-}
-
-.locksy-logo-symbol {
-  background: linear-gradient(145deg, #8b6bff, #06b9ac);
-  box-shadow: 0 12px 35px #10083f66;
-  border: 1px solid #ffffff55;
-}
-
-.locksy-illustration {
-  filter: drop-shadow(0 15px 25px #170c4d44);
-}
-
-.floating-sparkle {
-  color: #aafff1;
-  text-shadow: 0 0 15px #ffffff;
-  animation: locksySparkle 2.5s ease-in-out infinite;
-}
-
-.sparkle-two {
-  animation-delay: .8s;
-}
-
-.sparkle-three {
-  animation-delay: 1.5s;
-}
-
-.auth-glow-one {
-  background: #a78bfa;
-  filter: blur(65px);
-  opacity: .5;
-}
-
-.auth-glow-two {
-  background: #00d6c1;
-  filter: blur(75px);
-  opacity: .45;
-}
-
-.locksy-auth-form-panel {
-  background:
-    radial-gradient(circle at 100% 100%, #d8fff6 0%, transparent 35%),
-    linear-gradient(145deg, #ffffff, #f8f6ff);
-}
-
-.locksy-form-heading h2 {
-  color: #251454;
-  letter-spacing: -1.5px;
-  font-weight: 800;
-}
-
-.locksy-form-heading p {
-  color: #77718f;
-}
-
-.auth-eyebrow {
-  color: #7652d8;
-  letter-spacing: 3px;
-  font-weight: 800;
-}
-
-.locksy-login-form input {
-  border: 1px solid #e2dafa;
-  background: #ffffff;
-  border-radius: 13px;
-  transition: .25s ease;
-}
-
-.locksy-login-form input:focus {
-  border-color: #13b8aa;
-  box-shadow: 0 0 0 4px #13b8aa20;
-  outline: none;
-}
-
-.auth-submit {
-  background: linear-gradient(105deg, #7650df, #5544c9, #08a99e);
-  color: #fff;
-  border: 0;
-  border-radius: 13px;
-  box-shadow: 0 8px 22px #5740bd35;
-  transition: transform .2s ease, box-shadow .2s ease;
-}
-
-.auth-submit:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 28px #08a99e45;
-}
-
-.auth-switch button {
-  color: #7050d5;
-  font-weight: 800;
-}
-
-.auth-switch button:hover {
-  color: #079d94;
-}
-
-.locksy-auth-security {
-  color: #087e78;
-}
-
-.auth-divider span {
-  color: #89819f;
-}
-
-.auth-divider::before,
-.auth-divider::after {
-  background: #e7e0f4;
-}
-
-@keyframes locksySparkle {
-  0%, 100% {
-    opacity: .45;
-    transform: scale(.8) rotate(0deg);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.2) rotate(25deg);
-  }
-}
-
-@media(max-width:700px) {
-  .locksy-auth {
-    padding: 10px;
+@media (max-width: 380px) {
+  .locksy-auth-form-panel {
+    padding: 25px 18px;
   }
 
-  .locksy-auth-card {
-    border-radius: 20px;
-  }
-}
-
-/* LOCKSY floating sparkle effects */
-
-body::before,
-body::after {
-  content: "✦";
-  position: fixed;
-  z-index: 9999;
-  pointer-events: none;
-  font-size: 25px;
-  color: #9270ff;
-  text-shadow:
-    0 0 8px #a78bfa,
-    0 0 18px #a78bfa,
-    0 0 30px #13cfc0;
-  animation: locksyFloatingSparkle 4s ease-in-out infinite;
-}
-
-body::before {
-  top: 18%;
-  right: 8%;
-}
-
-body::after {
-  content: "✧";
-  bottom: 18%;
-  left: 7%;
-  color: #12bbae;
-  animation-delay: 1.5s;
-  animation-duration: 5s;
-}
-
-@keyframes locksyFloatingSparkle {
-  0%, 100% {
-    opacity: .3;
-    transform: scale(.7) rotate(0deg);
-  }
-
-  50% {
-    opacity: 1;
-    transform: scale(1.3) rotate(35deg);
+  .locksy-form-heading h2 {
+    font-size: 24px;
   }
 }
