@@ -1,6 +1,20 @@
 
 /* =========================================
-   LOCKSY - NEW PURPLE LOGIN DESIGN
+   LOCKSY - MODERN PURPLE LOGIN DESIGN
+   ========================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* =========================================
+   LOGIN PAGE
    ========================================= */
 
 .locksy-auth {
@@ -544,5 +558,195 @@
 
   .locksy-form-heading h2 {
     font-size: 24px;
+  }
+}
+
+/* =========================================
+   LOCKSY - MODERN DASHBOARD TYPOGRAPHY
+   ========================================= */
+
+#root {
+  font-family: 'DM Sans', sans-serif;
+}
+
+.app,
+.dashboard,
+.main-content {
+  font-family: 'DM Sans', sans-serif;
+  color: #292342;
+}
+
+.app h1,
+.app h2,
+.app h3,
+.dashboard h1,
+.dashboard h2,
+.dashboard h3 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  letter-spacing: -0.6px;
+  color: #292342;
+}
+
+.app h1,
+.dashboard h1 {
+  font-size: 27px;
+  font-weight: 800;
+}
+
+.app h2,
+.dashboard h2 {
+  font-size: 21px;
+  font-weight: 750;
+}
+
+.app p,
+.dashboard p {
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* =========================================
+   CATEGORY CARDS
+   ========================================= */
+
+.category-card,
+.category-item,
+.folder-card {
+  border: 1px solid #eee9f8;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 5px 18px rgba(55, 36, 105, 0.045);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.category-card:hover,
+.category-item:hover,
+.folder-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(75, 49, 145, 0.10);
+}
+
+/* Category names */
+
+.category-card h3,
+.category-item h3,
+.category-card strong,
+.category-item strong {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #30264d;
+  letter-spacing: -0.2px;
+}
+
+/* Category descriptions and counts */
+
+.category-card p,
+.category-item p,
+.category-card small,
+.category-item small {
+  font-size: 11px;
+  font-weight: 500;
+  color: #9189a3;
+}
+
+/* Category icons */
+
+.category-card svg,
+.category-item svg {
+  width: 23px;
+  height: 23px;
+  stroke-width: 1.8;
+}
+
+/* =========================================
+   DOCUMENT ROWS
+   ========================================= */
+
+.doc-row {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  border: 1px solid #eeeaf5;
+  border-radius: 14px;
+  background: #fff;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.doc-row:hover {
+  background: #faf8ff;
+  border-color: #ded3fa;
+}
+
+.doc-info strong {
+  display: block;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #30264d;
+}
+
+.doc-info small {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  color: #928ba2;
+}
+
+/* File icons */
+
+.file-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 12px;
+  color: #7352d8;
+  background: #f0ebff;
+}
+
+.file-icon svg {
+  width: 19px;
+  height: 19px;
+  stroke-width: 1.8;
+}
+
+/* =========================================
+   BUTTONS
+   ========================================= */
+
+.app button,
+.dashboard button {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+}
+
+/* =========================================
+   RESPONSIVE DASHBOARD
+   ========================================= */
+
+@media (max-width: 600px) {
+  .app h1,
+  .dashboard h1 {
+    font-size: 23px;
+  }
+
+  .app h2,
+  .dashboard h2 {
+    font-size: 19px;
+  }
+
+  .category-card h3,
+  .category-item h3 {
+    font-size: 12px;
+  }
+
+  .doc-row {
+    padding: 11px;
+    gap: 10px;
   }
 }
