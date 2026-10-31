@@ -37,6 +37,61 @@ const sampleDocuments = [
 
 const styles = `
 * { box-sizing: border-box; }
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+.locksy-app {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-weight: 400;
+  letter-spacing: -0.2px;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.locksy-welcome h1 {
+  font-size: 29px;
+  font-weight: 800;
+  letter-spacing: -1.2px;
+  line-height: 1.3;
+}
+
+.locksy-section-heading h2 {
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+}
+
+.locksy-category-card strong {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+.locksy-category-card small {
+  font-size: 11px;
+  font-weight: 500;
+  color: #9690A5;
+}
+
+.locksy-doc-info strong {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+}
+
+.locksy-nav button {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.locksy-page-title h1 {
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: -0.8px;
+}
 .locksy-app { min-height: 100vh; background: #F8F8FC; color: #25223A; font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif; }
 .locksy-layout { display: flex; min-height: 100vh; }
 .locksy-sidebar { width: 250px; flex-shrink: 0; background: white; border-right: 1px solid #EEEAF5; padding: 25px 17px 18px; display: flex; flex-direction: column; }
