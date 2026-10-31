@@ -937,3 +937,46 @@ body {
     border-radius: 20px;
   }
 }
+
+/* LOCKSY floating sparkle effects */
+
+body::before,
+body::after {
+  content: "✦";
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  font-size: 25px;
+  color: #9270ff;
+  text-shadow:
+    0 0 8px #a78bfa,
+    0 0 18px #a78bfa,
+    0 0 30px #13cfc0;
+  animation: locksyFloatingSparkle 4s ease-in-out infinite;
+}
+
+body::before {
+  top: 18%;
+  right: 8%;
+}
+
+body::after {
+  content: "✧";
+  bottom: 18%;
+  left: 7%;
+  color: #12bbae;
+  animation-delay: 1.5s;
+  animation-duration: 5s;
+}
+
+@keyframes locksyFloatingSparkle {
+  0%, 100% {
+    opacity: .3;
+    transform: scale(.7) rotate(0deg);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.3) rotate(35deg);
+  }
+}
