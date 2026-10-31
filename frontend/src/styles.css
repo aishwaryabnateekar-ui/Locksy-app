@@ -750,3 +750,190 @@ body {
     gap: 10px;
   }
 }
+
+/* =================================
+   LOCKSY PURPLE + TEAL AUTH THEME
+================================= */
+
+.locksy-auth {
+  background:
+    radial-gradient(circle at 12% 15%, #b7a2ff 0%, transparent 35%),
+    radial-gradient(circle at 85% 85%, #8ce9dc 0%, transparent 35%),
+    linear-gradient(135deg, #24105e, #087e88);
+  padding: 25px;
+}
+
+.locksy-auth-card {
+  border: 1px solid rgba(255,255,255,.55);
+  border-radius: 26px;
+  overflow: hidden;
+  box-shadow: 0 25px 80px rgba(24, 12, 78, .25);
+}
+
+.locksy-auth-visual {
+  background:
+    radial-gradient(circle at 20% 20%, #a78bfa 0%, transparent 38%),
+    radial-gradient(circle at 85% 80%, #08b6a8 0%, transparent 42%),
+    linear-gradient(145deg, #321477, #6540c8 55%, #087f88);
+  position: relative;
+  overflow: hidden;
+}
+
+.locksy-auth-visual::before,
+.locksy-auth-visual::after {
+  content: "✦";
+  position: absolute;
+  color: #ffffff;
+  font-size: 35px;
+  opacity: .8;
+  animation: locksySparkle 3s ease-in-out infinite;
+}
+
+.locksy-auth-visual::before {
+  top: 18%;
+  left: 12%;
+}
+
+.locksy-auth-visual::after {
+  bottom: 17%;
+  right: 13%;
+  animation-delay: 1.2s;
+}
+
+.locksy-brand-name {
+  color: #fff;
+  letter-spacing: 3px;
+  text-shadow: 0 4px 20px #16074766;
+}
+
+.locksy-brand-tagline {
+  color: #e7fffc;
+}
+
+.locksy-logo-symbol {
+  background: linear-gradient(145deg, #8b6bff, #06b9ac);
+  box-shadow: 0 12px 35px #10083f66;
+  border: 1px solid #ffffff55;
+}
+
+.locksy-illustration {
+  filter: drop-shadow(0 15px 25px #170c4d44);
+}
+
+.floating-sparkle {
+  color: #aafff1;
+  text-shadow: 0 0 15px #ffffff;
+  animation: locksySparkle 2.5s ease-in-out infinite;
+}
+
+.sparkle-two {
+  animation-delay: .8s;
+}
+
+.sparkle-three {
+  animation-delay: 1.5s;
+}
+
+.auth-glow-one {
+  background: #a78bfa;
+  filter: blur(65px);
+  opacity: .5;
+}
+
+.auth-glow-two {
+  background: #00d6c1;
+  filter: blur(75px);
+  opacity: .45;
+}
+
+.locksy-auth-form-panel {
+  background:
+    radial-gradient(circle at 100% 100%, #d8fff6 0%, transparent 35%),
+    linear-gradient(145deg, #ffffff, #f8f6ff);
+}
+
+.locksy-form-heading h2 {
+  color: #251454;
+  letter-spacing: -1.5px;
+  font-weight: 800;
+}
+
+.locksy-form-heading p {
+  color: #77718f;
+}
+
+.auth-eyebrow {
+  color: #7652d8;
+  letter-spacing: 3px;
+  font-weight: 800;
+}
+
+.locksy-login-form input {
+  border: 1px solid #e2dafa;
+  background: #ffffff;
+  border-radius: 13px;
+  transition: .25s ease;
+}
+
+.locksy-login-form input:focus {
+  border-color: #13b8aa;
+  box-shadow: 0 0 0 4px #13b8aa20;
+  outline: none;
+}
+
+.auth-submit {
+  background: linear-gradient(105deg, #7650df, #5544c9, #08a99e);
+  color: #fff;
+  border: 0;
+  border-radius: 13px;
+  box-shadow: 0 8px 22px #5740bd35;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.auth-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px #08a99e45;
+}
+
+.auth-switch button {
+  color: #7050d5;
+  font-weight: 800;
+}
+
+.auth-switch button:hover {
+  color: #079d94;
+}
+
+.locksy-auth-security {
+  color: #087e78;
+}
+
+.auth-divider span {
+  color: #89819f;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  background: #e7e0f4;
+}
+
+@keyframes locksySparkle {
+  0%, 100% {
+    opacity: .45;
+    transform: scale(.8) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2) rotate(25deg);
+  }
+}
+
+@media(max-width:700px) {
+  .locksy-auth {
+    padding: 10px;
+  }
+
+  .locksy-auth-card {
+    border-radius: 20px;
+  }
+}
