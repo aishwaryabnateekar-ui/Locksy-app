@@ -7,8 +7,8 @@ import {
   BriefcaseBusiness, ChevronRight, MoreVertical, Upload,
   X, Menu, Download, Trash2, LockKeyhole, Activity,
   Files, FilePlus2, Shield, Eye
-} from "lucide-react";
-
+} 
+from "lucide-react";
 const categories = [
   { name: "Certificates", icon: GraduationCap, color: "purple" },
   { name: "Mark Sheets", icon: FileText, color: "blue" },
@@ -46,7 +46,7 @@ export default function App() {
   const [notice, setNotice] = useState("");
   const fileRef = useRef(null);
 
-  const name = user?.name || user?.displayName || "Your account";
+  const name = user?.name || user?.displayName || "Aishwarya✨🎀";
   const email = user?.email || "";
 
   function login(loggedInUser) {
