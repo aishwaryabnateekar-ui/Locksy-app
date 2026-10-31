@@ -12,8 +12,7 @@
 
 ## 🖥️ Live Project Preview
 
-![LOCKSY Dashboard Preview](<img width="1867" height="912" alt="Screenshot 2026-11-01 003020" src="https://github.com/user-attachments/assets/aa6fa31a-078c-4403-a6c3-08adf5777be7" />
-)
+https://aishwaryabnateekar-ui.github.io/Locksy-app/
 
 *LOCKSY – Your personal digital vault for documents and memories.*
 
